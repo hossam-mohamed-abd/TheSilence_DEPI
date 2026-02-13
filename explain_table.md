@@ -31,15 +31,6 @@ This model helps pharmacies, health platforms, and analysts answer practical que
 | `website` | `VARCHAR(255)` | Official website |
 | `created_at` | `TIMESTAMP` | Record creation timestamp |
 
-```sql
-CREATE TABLE manufacturers (
-    manufacturer_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(150) NOT NULL UNIQUE,
-    country VARCHAR(100),
-    website VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
 
 ---
 
@@ -52,13 +43,6 @@ CREATE TABLE manufacturers (
 | `name` | `VARCHAR(120)` | Category name |
 | `description` | `TEXT` | Category explanation |
 
-```sql
-CREATE TABLE categories (
-    category_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(120) NOT NULL UNIQUE,
-    description TEXT
-);
-```
 
 ---
 
@@ -76,22 +60,6 @@ CREATE TABLE categories (
 | `is_prescription_required` | `BOOLEAN` | Indicates prescription requirement |
 | `created_at` | `TIMESTAMP` | Record creation timestamp |
 
-```sql
-CREATE TABLE drugs (
-    drug_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(180) NOT NULL,
-    strength VARCHAR(80),
-    form VARCHAR(80),
-    manufacturer_id INT NOT NULL,
-    category_id INT NOT NULL,
-    is_prescription_required BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_drugs_manufacturer
-        FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id),
-    CONSTRAINT fk_drugs_category
-        FOREIGN KEY (category_id) REFERENCES categories(category_id)
-);
-```
 
 ---
 
@@ -109,18 +77,6 @@ CREATE TABLE drugs (
 | `phone` | `VARCHAR(40)` | Contact number |
 | `is_24_hours` | `BOOLEAN` | Open 24/7 flag |
 
-```sql
-CREATE TABLE pharmacies (
-    pharmacy_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(180) NOT NULL,
-    address VARCHAR(255),
-    city VARCHAR(100),
-    latitude DECIMAL(10,7),
-    longitude DECIMAL(10,7),
-    phone VARCHAR(40),
-    is_24_hours BOOLEAN DEFAULT FALSE
-);
-```
 
 ---
 
@@ -136,21 +92,6 @@ CREATE TABLE pharmacies (
 | `stock_quantity` | `INT` | Quantity available |
 | `last_updated` | `TIMESTAMP` | Last stock/price update timestamp |
 
-```sql
-CREATE TABLE drug_inventory (
-    inventory_id INT PRIMARY KEY AUTO_INCREMENT,
-    drug_id INT NOT NULL,
-    pharmacy_id INT NOT NULL,
-    unit_price DECIMAL(10,2) NOT NULL,
-    stock_quantity INT NOT NULL DEFAULT 0,
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT uq_inventory_drug_pharmacy UNIQUE (drug_id, pharmacy_id),
-    CONSTRAINT fk_inventory_drug
-        FOREIGN KEY (drug_id) REFERENCES drugs(drug_id),
-    CONSTRAINT fk_inventory_pharmacy
-        FOREIGN KEY (pharmacy_id) REFERENCES pharmacies(pharmacy_id)
-);
-```
 
 ---
 
@@ -163,19 +104,6 @@ CREATE TABLE drug_inventory (
 | `alternative_drug_id` | `INT` (FK) | Alternative drug |
 | `substitution_note` | `VARCHAR(255)` | Optional pharmacist note |
 
-```sql
-CREATE TABLE drug_alternatives (
-    drug_id INT NOT NULL,
-    alternative_drug_id INT NOT NULL,
-    substitution_note VARCHAR(255),
-    PRIMARY KEY (drug_id, alternative_drug_id),
-    CONSTRAINT chk_not_self_alternative CHECK (drug_id <> alternative_drug_id),
-    CONSTRAINT fk_alt_drug
-        FOREIGN KEY (drug_id) REFERENCES drugs(drug_id),
-    CONSTRAINT fk_alt_alternative
-        FOREIGN KEY (alternative_drug_id) REFERENCES drugs(drug_id)
-);
-```
 
 ---
 
@@ -192,21 +120,6 @@ CREATE TABLE drug_alternatives (
 | `units_sold` | `INT` | Number of units sold |
 | `season_tag` | `VARCHAR(20)` | Optional derived season label (Winter, Summer, etc.) |
 
-```sql
-CREATE TABLE drug_demand_logs (
-    demand_log_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    drug_id INT NOT NULL,
-    pharmacy_id INT NOT NULL,
-    demand_date DATE NOT NULL,
-    units_requested INT NOT NULL,
-    units_sold INT NOT NULL,
-    season_tag VARCHAR(20),
-    CONSTRAINT fk_demand_drug
-        FOREIGN KEY (drug_id) REFERENCES drugs(drug_id),
-    CONSTRAINT fk_demand_pharmacy
-        FOREIGN KEY (pharmacy_id) REFERENCES pharmacies(pharmacy_id)
-);
-```
 
 ---
 
@@ -220,14 +133,6 @@ CREATE TABLE drug_demand_logs (
 | `description` | `TEXT` | Service description |
 | `duration_minutes` | `INT` | Typical service duration |
 
-```sql
-CREATE TABLE medical_services (
-    service_id INT PRIMARY KEY AUTO_INCREMENT,
-    service_name VARCHAR(180) NOT NULL UNIQUE,
-    description TEXT,
-    duration_minutes INT
-);
-```
 
 ---
 
@@ -242,15 +147,6 @@ CREATE TABLE medical_services (
 | `city` | `VARCHAR(100)` | Provider city |
 | `phone` | `VARCHAR(40)` | Contact number |
 
-```sql
-CREATE TABLE service_providers (
-    provider_id INT PRIMARY KEY AUTO_INCREMENT,
-    provider_name VARCHAR(180) NOT NULL,
-    provider_type VARCHAR(80) NOT NULL,
-    city VARCHAR(100),
-    phone VARCHAR(40)
-);
-```
 
 ---
 
@@ -267,22 +163,6 @@ CREATE TABLE service_providers (
 | `effective_from` | `DATE` | Price validity start |
 | `effective_to` | `DATE` | Price validity end (nullable) |
 
-```sql
-CREATE TABLE service_prices (
-    service_price_id INT PRIMARY KEY AUTO_INCREMENT,
-    service_id INT NOT NULL,
-    provider_id INT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    currency CHAR(3) NOT NULL DEFAULT 'USD',
-    effective_from DATE NOT NULL,
-    effective_to DATE,
-    CONSTRAINT fk_service_prices_service
-        FOREIGN KEY (service_id) REFERENCES medical_services(service_id),
-    CONSTRAINT fk_service_prices_provider
-        FOREIGN KEY (provider_id) REFERENCES service_providers(provider_id),
-    CONSTRAINT uq_service_provider_period UNIQUE (service_id, provider_id, effective_from)
-);
-```
 
 ---
 
@@ -320,18 +200,7 @@ CREATE TABLE service_prices (
 ## 🛠️ Example Usage
 
 ### 1) Find the cheapest current price for a drug
-```sql
-SELECT d.name AS drug_name,
-       p.name AS pharmacy_name,
-       di.unit_price
-FROM drug_inventory di
-JOIN drugs d ON d.drug_id = di.drug_id
-JOIN pharmacies p ON p.pharmacy_id = di.pharmacy_id
-WHERE d.name = 'Amoxicillin'
-  AND di.stock_quantity > 0
-ORDER BY di.unit_price ASC
-LIMIT 1;
-```
+
 
 ### 2) Find nearest pharmacy with stock (distance approximation)
 ```sql
