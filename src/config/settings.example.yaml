@@ -1,0 +1,11 @@
+project:
+  name: medical-pharmacy-intelligence
+  environment: dev
+
+storage:
+  lake_root: data/lake
+  warehouse_root: data/warehouse
+
+orchestration:
+  timezone: Africa/Cairo
+  default_retries: 3
