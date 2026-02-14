@@ -1,212 +1,236 @@
-# Medical & Pharmacy Intelligence System
+# Medical & Pharmacy Intelligence System (Egypt)
 
-A production-focused **Data Engineering platform** for Egypt's healthcare and pharmaceutical ecosystem.
+## Project Overview
+The **Medical & Pharmacy Intelligence System** is a data engineering project focused on tracking medicines and medical services in Egypt.  
+It helps users find available medicines at the best price and nearest location, while also analyzing seasonal demand patterns.
 
-This repository is structured for startup-grade execution by a cross-functional team to ingest, validate, model, and serve insights around:
+## Project Objectives
+- Find available medicine at the best price.
+- Identify pharmacies where a medicine is in stock.
+- Analyze demand by season and common diseases.
+- Reduce search time and effort for patients and caregivers.
 
-- Drug price tracking
-- Pharmacy availability
-- Seasonal demand analysis
-- Alternative drugs & active ingredients
-- Medical service intelligence (labs, radiology)
+## Data Sources & Data Types
+The platform is designed to process and integrate:
+- Medicine pricing data from trusted sources.
+- Drug availability across multiple pharmacies.
+- Seasonal demand data.
+- Drug alternatives and active ingredients.
+- Medical services data (labs, radiology, and related services).
 
----
+## Key Features
+1. Search by medicine name or active ingredient.
+2. Map-based nearest pharmacy/service locator.
+3. Price comparison across providers.
+4. Seasonal demand analytics.
+5. Alternative medicine suggestions when unavailable.
+6. Availability alerts and notifications.
 
-## 1) Project Overview
-
-The **Medical & Pharmacy Intelligence System** consolidates fragmented medical market data into a governed data platform that powers:
-
-- Operational monitoring (availability and pricing)
-- Strategic forecasting (seasonal demand and stock risk)
-- Decision-support products (drug alternatives, therapeutic substitutions)
-- External/internal consumers (dashboard, APIs, analytics notebooks)
-
-The architecture is designed for iterative growth from MVP to full-scale production with clear boundaries between ingestion, transformation, storage, serving, and governance.
-
----
-
-## 2) High-Level Architecture (Text Diagram)
-
-```text
-                  +---------------------------+
-                  |     External Sources      |
-                  |---------------------------|
-                  | Pharmacy feeds/APIs       |
-                  | Supplier lists/prices     |
-                  | Public healthcare portals |
-                  | Lab & radiology catalogs  |
-                  +-------------+-------------+
-                                |
-                                v
-+-------------------------+   Orchestration   +-------------------------+
-|  Ingestion Layer        |<----------------->|  Pipeline Scheduler     |
-|  (batch/stream/connect) |    (Airflow)      |  retries/lineage/SLAs   |
-+------------+------------+                   +------------+------------+
-             |                                              |
-             v                                              v
-+-------------------------+                   +-------------------------+
-| Data Lake (Bronze)      |                   | Data Quality &          |
-| raw immutable landing   |                   | Validation Checks       |
-+------------+------------+                   +------------+------------+
-             |                                              |
-             v                                              v
-+-------------------------+                   +-------------------------+
-| Data Lake (Silver/Gold) |------------------>| Warehouse (Dim/Fact)    |
-| cleaned/enriched/curated|                   | BI-ready marts          |
-+------------+------------+                   +------------+------------+
-             |                                              |
-     +-------+----------------+                     +-------+-------------+
-     |                        |                     |                     |
-     v                        v                     v                     v
-+------------+         +-------------+      +---------------+    +---------------+
-| Analytics  |         | API Layer   |      | Dashboard BI  |    | Data Science  |
-| notebooks  |         | FastAPI     |      | app/reporting |    | experimentation|
-+------------+         +-------------+      +---------------+    +---------------+
-```
+## Expected Deliverables
+- A searchable platform for medicines and pharmacies.
+- A lightweight dashboard for availability management.
+- Analytical market reports and demand insights.
 
 ---
 
-## 3) Tech Stack (Recommended Baseline)
+## Team
+**Team Name:** DEBI Data Engineering Squad
 
-- **Language**: Python 3.11+
-- **Ingestion**: Python connectors, requests/httpx, optional Kafka for events
-- **Orchestration**: Apache Airflow
-- **Transformation**: SQL + dbt (or SQLMesh), pandas/Polars for targeted jobs
-- **Storage**:
-  - Data Lake: object/file storage (Bronze/Silver/Gold)
-  - Warehouse: PostgreSQL/BigQuery/Snowflake (environment dependent)
-- **API**: FastAPI
-- **Dashboard**: Streamlit/React + BI embedding (as needed)
-- **Infra**: Docker, Terraform
-- **CI/CD**: GitHub Actions
-- **Quality**: pytest, Great Expectations (optional), schema contracts
+### 1) Hossam Mohamed
+**Role:** Team Lead  
+**Background:** Web Development  
+**Strengths:**
+- Leadership & task distribution
+- Strong general tech awareness
+- Advanced AI utilization
+- Cybersecurity fundamentals
+- Office tools proficiency
 
+**Profile Details**
+- Student ID: 21048344
+- Full Name: Hossam Mohamed Abdalhakam
+- Email: hossam545mohamed@gmail.com
+- Phone: 01015981677
+- GitHub: https://github.com/hossam-mohamed-abd
+
+### 2) Abram Eisa
+**Focus:** Data & AI Engineering  
+**Strengths:**
+- Machine Learning & Deep Learning
+- Python & OOP
+- Data Structures & Algorithms
+- Microsoft Data Engineering Track (DEPI)
+
+**Profile Details**
+- Student ID: 21124476
+- Full Name: Abram Eisa Awad Naguib
+- Email: abrameisa907@gmail.com
+- Phone: 01278042476
+
+### 3) Eyad Akram
+**Focus:** Data Engineering / Data Analysis  
+**Strengths:**
+- Python (intensive training)
+- SQL
+- Data Cleaning & Transformation
+- Analytical mindset
+- Strong communication
+
+**Profile Details**
+- Student ID: 21003755
+- Full Name: Eyad Akram Mohamed Kelany
+- Email: eyadakrm4@gmail.com
+- Phone: 01061957940
+- GitHub: https://github.com/Eyad-Akram
+
+### 4) Zeinab Abdelhakem
+**Focus:** Data Engineering & Big Data  
+**Strengths:**
+- LLM Applications & Prompt Engineering
+- Big Data internships
+- Backend Development
+- Competitive Programming
+- IEEE & GDG AI Committee experience
+
+**Profile Details**
+- Student ID: 21046152
+- Full Name: Zeinab Mohamed Abdelhakem
+- Email: zainabmabdelhakem@gmail.com
+- Phone: 01152485775
+- GitHub: https://github.com/Zeinab-Abdelhakem
+
+### 5) Reem Mahrous
+**Focus:** Core Computer Science & Problem Solving  
+**Strengths:**
+- Data Structures & Algorithms
+- SQL
+- Competitive Programming (ECPC Participant – Level 3)
+- Strong CS fundamentals
+
+**Profile Details**
+- Student ID: 21123421
+- Full Name: Reem Mahrous Saad
+- Email: reemmahrous91@gmail.com
+- Phone: 01010749223
+- GitHub: https://github.com/Reem-ELdegheidy
+
+### 6) Halla Mohamed
+**Focus:** AI & Mathematical Foundations  
+**Strengths:**
+- Python / AI / ML training
+- Strong mathematics interest
+- LaTeX & technical content creation
+- Interest in Quantum Computing & ERP systems
+- Creative thinking
+
+**Profile Details**
+- Student ID: 21133335
+- Full Name: Halla Mohamed Abd Elmoniem
+- Email: hallamohamad1@gmail.com
+- Phone: 01015886528
 ---
 
-## 4) Data Sources
+## Team
+**Team Name:** DEBI Data Engineering Squad
 
-Planned source domains:
+### 1) Hossam Mohamed
+**Role:** Team Lead  
+**Background:** Web Development  
+**Strengths:**
+- Leadership & task distribution
+- Strong general tech awareness
+- Advanced AI utilization
+- Cybersecurity fundamentals
+- Office tools proficiency
 
-1. **Pharmacy & Distributor Feeds**
-   - Stock availability
-   - Retail and wholesale prices
-2. **Regulatory/Public Medical Datasets**
-   - Drug registrations, active ingredients, approved alternatives
-3. **Demand Signals**
-   - Historical transactions, seasonal disease indicators, geographic patterns
-4. **Medical Service Catalogs**
-   - Labs and radiology services, service pricing and location metadata
+**Profile Details**
+- Student ID: 21048344
+- Full Name: Hossam Mohamed Abdalhakam
+- Email: hossam545mohamed@gmail.com
+- Phone: 01015981677
+- GitHub: https://github.com/hossam-mohamed-abd
 
-> Every source should have an owner, ingestion SLA, schema contract, and quality checks documented in `docs/data_dictionary.md`.
+### 2) Abram Eisa
+**Focus:** Data & AI Engineering  
+**Strengths:**
+- Machine Learning & Deep Learning
+- Python & OOP
+- Data Structures & Algorithms
+- Microsoft Data Engineering Track (DEPI)
 
----
+**Profile Details**
+- Student ID: 21124476
+- Full Name: Abram Eisa Awad Naguib
+- Email: abrameisa907@gmail.com
+- Phone: 01278042476
 
-## 5) Local Development Setup
+### 3) Eyad Akram
+**Focus:** Data Engineering / Data Analysis  
+**Strengths:**
+- Python (intensive training)
+- SQL
+- Data Cleaning & Transformation
+- Analytical mindset
+- Strong communication
 
-### Prerequisites
+**Profile Details**
+- Student ID: 21003755
+- Full Name: Eyad Akram Mohamed Kelany
+- Email: eyadakrm4@gmail.com
+- Phone: 01061957940
+- GitHub: https://github.com/Eyad-Akram
 
-- Python 3.11+
-- Docker & Docker Compose
-- Make (optional but recommended)
+### 4) Zeinab Abdelhakem
+**Focus:** Data Engineering & Big Data  
+**Strengths:**
+- LLM Applications & Prompt Engineering
+- Big Data internships
+- Backend Development
+- Competitive Programming
+- IEEE & GDG AI Committee experience
 
-### Quick Start
+**Profile Details**
+- Student ID: 21046152
+- Full Name: Zeinab Mohamed Abdelhakem
+- Email: zainabmabdelhakem@gmail.com
+- Phone: 01152485775
+- GitHub: https://github.com/Zeinab-Abdelhakem
 
-```bash
-# 1) Clone repository
-git clone <repo-url>
-cd TheSilence_DEPI
+### 5) Reem Mahrous
+**Focus:** Core Computer Science & Problem Solving  
+**Strengths:**
+- Data Structures & Algorithms
+- SQL
+- Competitive Programming (ECPC Participant – Level 3)
+- Strong CS fundamentals
 
-# 2) Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+**Profile Details**
+- Student ID: 21123421
+- Full Name: Reem Mahrous Saad
+- Email: reemmahrous91@gmail.com
+- Phone: 01010749223
+- GitHub: https://github.com/Reem-ELdegheidy
 
-# 3) Install dependencies (when requirements are added)
-pip install -r requirements.txt
+### 6) Halla Mohamed
+**Focus:** AI & Mathematical Foundations  
+**Strengths:**
+- Python / AI / ML training
+- Strong mathematics interest
+- LaTeX & technical content creation
+- Interest in Quantum Computing & ERP systems
+- Creative thinking
 
-# 4) Configure environment
-cp .env.example .env
+**Profile Details**
+- Student ID: 21133335
+- Full Name: Halla Mohamed Abd Elmoniem
+- Email: hallamohamad1@gmail.com
+- Phone: 01015886528
+## ERD / Database Overview (Textual)
+At a high level:
+1. Drug master data is managed through `drugs`, `manufacturers`, and `categories`.
+2. Availability and pricing are managed through `drug_inventory` across `pharmacies`.
+3. Substitution logic is modeled through `drug_alternatives`.
+4. Demand intelligence is recorded in `drug_demand_logs`.
+5. Non-drug medical offerings are modeled through `medical_services`, `service_providers`, and `service_prices`.
 
-# 5) Run tests
-pytest -q
-
-# 6) Run API (example)
-uvicorn api.app.main:app --reload --port 8000
-
-# 7) Run dashboard (example)
-streamlit run dashboard/app/main.py
-```
-
----
-
-## 6) Repository Structure
-
-```text
-.
-├── api/                    # Service layer exposing curated data products
-├── dashboard/              # User-facing analytics and monitoring interfaces
-├── data/
-│   ├── raw/                # Immutable source-aligned extracts
-│   ├── external/           # Third-party reference files
-│   ├── processed/          # Transitional processed datasets
-│   ├── lake/
-│   │   ├── bronze/         # Raw standardized landing
-│   │   ├── silver/         # Cleaned and conformed data
-│   │   └── gold/           # Curated business-ready datasets
-│   └── warehouse/          # Exported/load-ready warehouse artifacts
-├── docs/                   # Architecture, dictionary, pipeline, deployment docs
-├── infra/                  # Docker, Terraform, orchestration configs
-├── notebooks/              # Analysis and experimentation notebooks
-├── scripts/                # Operational scripts (bootstrap, migrations, helpers)
-├── src/
-│   ├── ingestion/          # Source connectors and raw loaders
-│   ├── pipelines/          # End-to-end orchestration logic
-│   ├── transformations/    # Cleansing/business transformation logic
-│   ├── storage/            # Warehouse/lake IO abstractions
-│   ├── analytics/          # Feature engineering and metric generation
-│   ├── utils/              # Shared helper functions
-│   └── config/             # Environment/config schema management
-├── tests/
-│   ├── unit/               # Fast isolated tests
-│   ├── integration/        # Pipeline and interface tests
-│   └── data_quality/       # Data validation tests and constraints
-├── .github/
-│   ├── workflows/          # CI/CD workflows
-│   ├── pull_request_template.md
-│   └── issue_template.md
-├── CONTRIBUTING.md
-├── GIT_WORKFLOW.md
-├── PROJECT_ROADMAP.md
-└── README.md
-```
-
----
-
-## 7) Team Operating Model (4 Roles)
-
-- **Data Engineer**
-  - Owns ingestion, orchestration, storage modeling, observability
-- **Data Analyst**
-  - Owns BI metrics, dashboard requirements, validation of business logic
-- **Backend Engineer**
-  - Owns API contracts, auth, service reliability, integrations
-- **Frontend Developer**
-  - Owns dashboard UX, interactions, visualization delivery
-
-Shared standards: CI gating, code review, schema versioning, and documented ownership for every pipeline.
-
----
-
-## 8) Future Roadmap
-
-See [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md) for phased delivery from ingestion MVP to production deployment.
-
----
-
-## 9) Documentation Index
-
-- [Architecture](docs/architecture.md)
-- [Data Dictionary](docs/data_dictionary.md)
-- [Pipeline Design](docs/pipeline_design.md)
-- [Deployment Guide](docs/deployment_guide.md)
-- [Git Workflow](GIT_WORKFLOW.md)
-- [Contributing](CONTRIBUTING.md)
+This design separates **reference data**, **transactional data**, and **analytics data**, making reporting and expansion easier.
