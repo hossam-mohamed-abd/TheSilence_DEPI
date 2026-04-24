@@ -1,75 +1,90 @@
 # Data Engineering Progress
 
+## Status Summary
+
+| Task                    | Status         | Owner           | Deadline           | Notes |      
+| ----------------------- | -------------- | --------------- | ------------------ | ----- |
+| Problem Definition      | ✅ Done         | -               | -                  | -     |    
+| SRS                     | ✅ Done         | -               | -                  | -     |        
+| Data Collection         | ✅ Done         | -               | -                  | -     |       
+| Data Cleaning           | ✅ Done         | -               | -                  | -     |   
+| Data Modeling           | ✅ Done         | -               | -                  | -     |  
+| Data Staging            | ✅ Done         | -               | -                  | -     |  
+| Database Implementation | 🟡 In Progress | Hala Mohamed    | 22-04-2026 7:00 PM |Failure to meet the deadline| 
+| Data Warehouse          | 🟡 In Progress | Zainab abdelhak | 26-04-2026 3:00 AM |       |       
+| Pipeline                | 🟡 In Progress | abram Eisa      | [Date]             |       |   
+| Data Validation         | ⏳ Next         | [Name]          | [Date]             |       | 
+
+---
+
+## Overview
+
 This document describes what has been completed and what is currently in progress in the Data Engineering phase of the project.
 
 ---
 
-## ✅ Completed Tasks
+## Completed Work
 
-### 1. Problem Definition
+### Problem Definition
 
-* Defined the main goals of the system:
+Defined the main goals of the system:
 
-  * Drug search
-  * Price comparison
-  * Pharmacy discovery
+* Drug search
+* Price comparison
+* Pharmacy discovery
 
-### 2. SRS (Software Requirements Specification)
+### SRS (Software Requirements Specification)
 
-* Documented:
+Documented:
 
-  * Functional requirements
-  * Non-functional requirements
-  * Use cases
+* Functional requirements
+* Non-functional requirements
+* Use cases
 
-### 3. Data Collection
+### Data Collection
 
-* Collected datasets including:
+Collected datasets including:
 
-  * Drugs
-  * Pharmacies
-  * Prices
+* Drugs
+* Pharmacies
+* Prices
 
-### 4. Data Cleaning
+### Data Cleaning
 
 * Removed duplicates
 * Handled missing values
 * Standardized data formats
 
-### 5. Data Modeling (Schema Design)
+### Data Modeling (Schema Design)
 
 * Designed database schema (ERD)
 * Defined relationships between tables
 
-### 6. Data Staging
+### Data Staging
 
 * Stored cleaned data in CSV/Excel files
 * Organized under data/staging/
 
 ---
 
-## 🟡 In Progress Tasks
+## Work In Progress
 
-### 7. Database Implementation (In Progress)
+### Database Implementation
 
 * Creating database and tables
 * Applying schema.sql
 * Preparing tables for data insertion
 
----
-
-### 8. Data Warehouse (In Progress)
+### Data Warehouse
 
 * Creating a final structured dataset
 * Combining data from multiple tables
-* Target:
+* Target output:
 
   * final_dataset table or CSV
   * Includes drug, pharmacy, price, and location
 
----
-
-### 9. Pipeline (In Progress)
+### Pipeline
 
 * Building ETL pipeline script
 * Automating:
@@ -83,32 +98,12 @@ This document describes what has been completed and what is currently in progres
 
 ---
 
-## ⏳ Next Steps
+## Next Step
 
-### 10. Data Validation
+### Data Validation
 
 * Ensure:
 
   * No null values
   * No duplicates
   * Correct relationships
-
----
-
-## 📌 Status Summary
-
-| Task                    | Status         |
-| ----------------------- | -------------- |
-| Problem Definition      | ✅ Done         |
-| SRS                     | ✅ Done         |
-| Data Collection         | ✅ Done         |
-| Data Cleaning           | ✅ Done         |
-| Data Modeling           | ✅ Done         |
-| Data Staging            | ✅ Done         |
-| Database Implementation | 🟡 In Progress |
-| Data Warehouse          | 🟡 In Progress |
-| Pipeline                | 🟡 In Progress |
-| Data Validation         | ⏳ Next         |
-
----
-
