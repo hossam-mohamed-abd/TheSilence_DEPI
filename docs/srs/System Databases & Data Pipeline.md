@@ -1,4 +1,4 @@
-# 🗄️ System Databases & Data Pipeline Architecture
+#  System Databases & Data Pipeline Architecture
 
 > النظام مبني على architecture متعددة الطبقات — فصل تام بين الأنظمة التشغيلية، التحليلية، وأنظمة الذكاء الاصطناعي، مع الحفاظ على ترابط كامل بين جميع الأجزاء.
 
@@ -9,7 +9,7 @@
 
 ## قواعد البيانات
 
-### 1. 🟢 Main Operational Database (OLTP)
+### 1.  Main Operational Database (OLTP)
 > القاعدة الأساسية للتشغيل اليومي
 
 **الغرض:** التعاملات اللحظية للمستخدمين والصيدليات.
@@ -26,7 +26,7 @@
 
 ---
 
-### 2. 🔵 Analytics & Data Warehouse (OLAP)
+### 2.  Analytics & Data Warehouse (OLAP)
 > قاعدة التحليلات والتقارير والذكاء الاصطناعي
 
 **الغرض:** تشغيل Queries ثقيلة بعيداً عن القاعدة التشغيلية.
@@ -42,7 +42,7 @@
 
 ---
 
-### 3. 🟣 AI / ML Feature Storage
+### 3.  AI / ML Feature Storage
 > تخزين البيانات الجاهزة للذكاء الاصطناعي
 
 **الغرض:** فصل عمليات الـ AI عن قواعد البيانات التشغيلية.
@@ -56,7 +56,7 @@
 
 ---
 
-### 4. 🟡 Logging & Monitoring Database
+### 4.  Logging & Monitoring Database
 > مراقبة النظام والأخطاء والنشاطات
 
 **الغرض:** استقرار النظام، تحسين الأداء، اكتشاف المشاكل.
@@ -70,7 +70,7 @@
 
 ---
 
-### 5. 🔮 Future Vector Database *(قادم)*
+### 5.  Future Vector Database *(قادم)*
 > دعم البحث الذكي والـ AI المتقدم
 
 **الغرض:** Semantic Search و Vector Similarity و AI Retrieval.
@@ -82,7 +82,7 @@
 
 ---
 
-## 🔄 Data Pipeline Architecture
+##  Data Pipeline Architecture
 
 ### تدفق البيانات
 
