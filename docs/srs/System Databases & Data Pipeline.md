@@ -84,6 +84,8 @@
 
 ##  Data Pipeline Architecture
 
+###  Hybrid Pipeline --> معلومة مهمة هنشرحها فى الميت 
+
 ### تدفق البيانات
 
 ```
