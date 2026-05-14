@@ -76,6 +76,7 @@ Pharmacy & Marketplace Stakeholders
 يديرون الحملات التسويقية والعروض.
 
 AI & Analytics Stakeholders
+------
 1️⃣6️⃣ Recommendation Engine
 
 المسؤول عن اقتراح الأدوية المشابهة.
@@ -97,6 +98,7 @@ AI & Analytics Stakeholders
 يحمي النظام من التلاعب والـ spam.
 
 External Stakeholders
+----------
 2️⃣0️⃣ Pharmaceutical Companies
 
 توفر بيانات ومنتجات دوائية للنظام.
@@ -180,6 +182,7 @@ Future Stakeholders
 يوفرون خدمات أو بيانات إضافية.
 
 Internal Systems Stakeholders
+-----
 3️⃣6️⃣ Authentication System
 
 يدير تسجيل الدخول والصلاحيات.
