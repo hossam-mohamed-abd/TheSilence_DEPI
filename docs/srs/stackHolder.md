@@ -1,4 +1,5 @@
 Main Stakeholders
+----------
 1️⃣ End Users / Patients
 
 المستخدم الأساسي للنظام.
@@ -45,6 +46,7 @@ Main Stakeholders
 يتابعون الشكاوى والاستفسارات.
 
 Pharmacy & Marketplace Stakeholders
+----------
 🔟 Pharmacy Branch Managers
 
 يديرون فروع الصيدليات المختلفة.
@@ -76,7 +78,7 @@ Pharmacy & Marketplace Stakeholders
 يديرون الحملات التسويقية والعروض.
 
 AI & Analytics Stakeholders
-------
+----------
 1️⃣6️⃣ Recommendation Engine
 
 المسؤول عن اقتراح الأدوية المشابهة.
@@ -120,6 +122,7 @@ External Stakeholders
 تراجع سلامة البيانات والتوصيات.
 
 Technical Stakeholders
+----------
 2️⃣4️⃣ Frontend Developers
 
 يبنون واجهات المستخدم وتجربة الاستخدام.
@@ -156,6 +159,7 @@ Technical Stakeholders
 يضمنون جودة واستقرار التطبيق.
 
 Future Stakeholders
+----------
 3️⃣1️⃣ Hospitals
 
 قد تستخدم النظام داخل العمليات الطبية.
@@ -182,7 +186,7 @@ Future Stakeholders
 يوفرون خدمات أو بيانات إضافية.
 
 Internal Systems Stakeholders
------
+----------
 3️⃣6️⃣ Authentication System
 
 يدير تسجيل الدخول والصلاحيات.
