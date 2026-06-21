@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediSearch | AI Recommendations</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#233144",
+                    "surface-container-highest": "#d5e3fd",
+                    "surface-container-high": "#dde9ff",
+                    "on-tertiary-fixed-variant": "#812800",
+                    "on-tertiary-container": "#ffc6b2",
+                    "tertiary-fixed-dim": "#ffb59b",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#0d1c2f",
+                    "tertiary-fixed": "#ffdbcf",
+                    "outline-variant": "#c3c6d6",
+                    "surface": "#f8f9ff",
+                    "tertiary": "#7b2600",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#5ddbbe",
+                    "outline": "#737685",
+                    "on-secondary-fixed-variant": "#005143",
+                    "on-surface-variant": "#434654",
+                    "on-tertiary-fixed": "#380d00",
+                    "inverse-on-surface": "#ebf1ff",
+                    "secondary": "#006b59",
+                    "surface-tint": "#0c56d0",
+                    "inverse-primary": "#b2c5ff",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "primary": "#003d9b",
+                    "surface-container-low": "#eff4ff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#0052cc",
+                    "secondary-container": "#7cf8da",
+                    "on-primary-container": "#c4d2ff",
+                    "tertiary-container": "#a33500",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#d5e3fd",
+                    "on-primary-fixed-variant": "#0040a2",
+                    "background": "#f8f9ff",
+                    "surface-dim": "#ccdbf4",
+                    "on-secondary-fixed": "#00201a",
+                    "primary-fixed": "#dae2ff",
+                    "secondary-fixed": "#7cf8da",
+                    "on-background": "#0d1c2f",
+                    "on-secondary-container": "#00725f",
+                    "surface-container": "#e6eeff",
+                    "on-primary-fixed": "#001848",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "base": "4px",
+                    "xxl": "48px",
+                    "container-max": "1280px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-effect { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .bento-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bento-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); background-size: 200% 100%; animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest border-b border-outline-variant shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">MediSearch</span>
+<div class="hidden md:flex gap-lg">
+<a class="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Search</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">About</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-primary font-label-md text-label-md px-md py-sm hover:bg-surface-container-low transition-colors duration-200">Login</button>
+<button class="bg-primary text-on-primary rounded-lg px-lg py-sm font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all">Sign up</button>
+</div>
+</div>
+</nav>
+<main class="max-w-container-max mx-auto px-lg py-xxl">
+<!-- AI Introduction Hero -->
+<section class="mb-xxl relative overflow-hidden rounded-xl bg-primary-container p-xl text-on-primary-container shadow-sm">
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-20 pointer-events-none">
+
+</div>
+<div class="relative z-10 max-w-3xl">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined bg-on-primary-container text-primary-container p-1 rounded-full text-md">smart_toy</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">AI Assistant Insight</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl mb-md">Based on your search for <span class="underline decoration-secondary decoration-4 underline-offset-8">Atorvastatin</span>, here are smart alternatives.</h1>
+<p class="font-body-lg text-body-lg opacity-90 max-w-2xl">I've analyzed clinical efficacy, current market pricing, and supply chain availability to suggest alternatives that may offer better value or accessibility.</p>
+</div>
+</section>
+<!-- Bento Grid Analysis -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg mb-xxl">
+<!-- Comparison Table Card -->
+<div class="md:col-span-8 glass-effect rounded-xl p-xl bento-card">
+<div class="flex justify-between items-center mb-xl">
+<h2 class="font-headline-md text-headline-md text-primary">Medication Comparison</h2>
+<span class="text-body-sm font-label-sm px-sm py-xs bg-surface-container-high rounded-full text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">history</span> Updated 2m ago
+                    </span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-separate border-spacing-y-2">
+<thead>
+<tr class="text-on-surface-variant font-label-md text-label-md">
+<th class="pb-md px-md">Feature</th>
+<th class="pb-md px-md bg-surface-container text-primary rounded-t-lg">Atorvastatin (Search)</th>
+<th class="pb-md px-md text-secondary">Rosuvastatin (AI Pick)</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<tr class="bg-surface-container-lowest">
+<td class="py-md px-md border-y border-l rounded-l-lg">Avg. Price (30d)</td>
+<td class="py-md px-md border-y bg-surface-container-low">$14.50</td>
+<td class="py-md px-md border-y border-r rounded-r-lg font-bold text-secondary-container-on bg-secondary-container/10">$9.20</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="py-md px-md border-y border-l rounded-l-lg">Relative Efficacy</td>
+<td class="py-md px-md border-y bg-surface-container-low">High</td>
+<td class="py-md px-md border-y border-r rounded-r-lg font-bold">Ultra-High</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="py-md px-md border-y border-l rounded-l-lg">Availability</td>
+<td class="py-md px-md border-y bg-surface-container-low text-error flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">warning</span> Low Stock
+                                </td>
+<td class="py-md px-md border-y border-r rounded-r-lg text-secondary">In Stock</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Confidence Scores & Trends -->
+<div class="md:col-span-4 flex flex-col gap-lg">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl bento-card flex-1">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-xl flex items-center gap-xs">
+<span class="material-symbols-outlined text-md">verified</span> AI Confidence Scores
+                    </h3>
+<div class="space-y-lg">
+<div>
+<div class="flex justify-between mb-sm">
+<span class="font-body-sm text-body-sm">Clinical Match</span>
+<span class="font-label-md text-label-md">98%</span>
+</div>
+<div class="h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[98%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-sm">
+<span class="font-body-sm text-body-sm">Cost Efficiency</span>
+<span class="font-label-md text-label-md">84%</span>
+</div>
+<div class="h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[84%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-sm">
+<span class="font-body-sm text-body-sm">Supply Stability</span>
+<span class="font-label-md text-label-md">92%</span>
+</div>
+<div class="h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[92%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-inverse-surface text-surface-container-lowest rounded-xl p-xl bento-card flex-1">
+<h3 class="font-label-md text-label-md opacity-70 mb-md">Market Demand Trends</h3>
+<div class="flex items-end gap-xs h-32 mb-md px-base">
+<div class="flex-1 bg-primary h-[40%] rounded-t-sm opacity-40"></div>
+<div class="flex-1 bg-primary h-[55%] rounded-t-sm opacity-50"></div>
+<div class="flex-1 bg-primary h-[50%] rounded-t-sm opacity-60"></div>
+<div class="flex-1 bg-primary h-[70%] rounded-t-sm opacity-70"></div>
+<div class="flex-1 bg-primary h-[90%] rounded-t-sm opacity-100"></div>
+</div>
+<div class="flex justify-between text-[10px] font-label-sm opacity-50 uppercase tracking-tighter">
+<span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span>
+</div>
+<p class="mt-md font-body-sm text-body-sm leading-tight text-surface-variant">Rosuvastatin demand has risen by 22% this quarter due to generic availability.</p>
+</div>
+</div>
+</div>
+<!-- Related Medications Carousel -->
+<section class="mb-xxl">
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-headline-md text-headline-md">Other Related Options</h2>
+<div class="flex gap-sm">
+<button class="p-sm rounded-full border border-outline hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-sm rounded-full border border-outline hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-lg overflow-x-auto pb-md snap-x scrollbar-hide">
+<!-- Suggestion 1 -->
+<div class="min-w-[300px] bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden snap-start bento-card">
+<div class="h-40 bg-surface-container relative">
+<img class="w-full h-full object-cover" data-alt="A clean, clinical close-up of a medicine bottle and white capsules on a light blue high-tech background. The lighting is bright and laboratory-like, using the primary medical blue colors from the design system. Minimalist and high-trust pharmacy aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBivfX24g4Df_4J8epomw1VTlDfiRp8M-I6BxGf-uhUqC9Y11Z5ttj-o6USKRJ1Dr-iL8aI1ZODuyZQIUyhkBI5a0vi-pfoASEH7nyn6cDymkysRShyBwNBA0kHUgMzXbw7vWDunnPjr-TYal_v07HZ4jz05aLMZRcTO9mAgXPECERuJxu73KvDgaWO2tuflvbQPc8qqFedqOF3z9KDMHwHgI4H87BS3VVCwyg3S2o6Y61s0EgniNUBM_W_jMeafb9cfuqVQLmY93u8"/>
+<div class="absolute top-sm right-sm bg-secondary-container text-on-secondary-container px-sm py-xs rounded-full font-label-sm text-label-sm">Best Value</div>
+</div>
+<div class="p-md">
+<h3 class="font-label-md text-label-md text-primary mb-xs">Simvastatin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Effective for moderate cases with broad availability.</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-md text-headline-md">$5.00 <span class="text-body-sm font-normal">/30d</span></span>
+<button class="text-primary font-label-md text-label-md flex items-center gap-xs">Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+</div>
+</div>
+<!-- Suggestion 2 -->
+<div class="min-w-[300px] bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden snap-start bento-card">
+<div class="h-40 bg-surface-container relative">
+<img class="w-full h-full object-cover" data-alt="Close-up photograph of medical tablets being placed into a weekly pill organizer on a white sterile surface. Soft shadows and clean lighting emphasize a healthcare setting. Color palette uses soft blues and whites to match the MediSearch corporate modern brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkIuwtCO7rJjNUKTzK1kt3KqOuq2buFuxP9eREYOH00iRnSliQGPllVCzfL30riQkq8EwHp0WceCEOPlLcmUUJHEYOcrqHDQnF6yMlT6Bg1vwo2s25geBJsVBQvTHyn2Z69z8STPe9s5VY2o2ZJeXJoESgvFxHpi1UsOhV0oQewPwgsITCbaoQlVau7F0TxGucPpn8JFQSMNeiXlRHBiwH6Ia5w4r4KurD5mo60BRhPrlIhXmfES9Cm0O5YaC5AC1zTZ1-t6sLuzQj"/>
+</div>
+<div class="p-md">
+<h3 class="font-label-md text-label-md text-primary mb-xs">Pravastatin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Lower risk of drug interactions for patients on multi-medication.</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-md text-headline-md">$11.20 <span class="text-body-sm font-normal">/30d</span></span>
+<button class="text-primary font-label-md text-label-md flex items-center gap-xs">Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+</div>
+</div>
+<!-- Suggestion 3 -->
+<div class="min-w-[300px] bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden snap-start bento-card">
+<div class="h-40 bg-surface-container relative">
+<img class="w-full h-full object-cover" data-alt="A professional pharmacist in a modern, brightly lit white pharmacy reaching for a box of medication on a clean shelf. The background is slightly blurred with soft medical blue and white tones. Professional, authoritative yet empathetic mood representing high-quality healthcare services." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzsMxk2GpIGEGioC_0bVGmyH3CP2hupMcjf0yTgpV6oQJ7su3zUYbaE8KfA-aynCThR5U0-VyjBVmX3wGdM_jpBQM9biWAe8Hxdc19njJ_pRQ3gPV9iNk9eDaDR_labFPZN6ZxCc3aYss9s4SnxUyz8yCi-vGLqlDJ1UowSAnmjvV5YL3oT4BoSSGgTOfwgL4_l-tH0ePe-8fUZcbOON67A9cYCSdT-z39xq-XRUFg-5945co5NjjoF3oxZOKCRHGQmjd2nnm9TSmC"/>
+<div class="absolute top-sm right-sm bg-tertiary-container text-on-tertiary text-white px-sm py-xs rounded-full font-label-sm text-label-sm">High Potency</div>
+</div>
+<div class="p-md">
+<h3 class="font-label-md text-label-md text-primary mb-xs">Livalo</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Brand-name option with high metabolic stability profile.</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-md text-headline-md">$145.00 <span class="text-body-sm font-normal">/30d</span></span>
+<button class="text-primary font-label-md text-label-md flex items-center gap-xs">Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Disclaimer -->
+<section class="bg-surface-container rounded-xl p-lg border-l-4 border-primary flex gap-md items-start">
+<span class="material-symbols-outlined text-primary text-xl">info</span>
+<div>
+<h4 class="font-label-md text-label-md text-primary mb-xs">Medical Disclaimer</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">These recommendations are generated by an artificial intelligence based on aggregated market data and clinical guidelines. <strong>Consult your physician before making any changes to your prescribed medication.</strong> Individual health conditions may vary, and a professional diagnosis is essential for medical safety.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface text-surface-container-highest">
+<div class="w-full py-xxl px-lg grid grid-cols-1 md:grid-cols-4 gap-xl max-w-container-max mx-auto">
+<div class="flex flex-col gap-md">
+<span class="font-headline-md text-headline-md font-bold text-surface-container-lowest">MediSearch</span>
+<p class="font-body-sm text-body-sm opacity-70 italic">Optimizing health decisions through intelligent data analysis.</p>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-label-md text-label-md text-primary-fixed mb-sm">Resources</h4>
+<a class="text-surface-variant hover:text-white underline-offset-4 hover:underline font-body-sm text-body-sm" href="#">API Documentation</a>
+<a class="text-surface-variant hover:text-white underline-offset-4 hover:underline font-body-sm text-body-sm" href="#">Help Center</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-label-md text-label-md text-primary-fixed mb-sm">Legal</h4>
+<a class="text-surface-variant hover:text-white underline-offset-4 hover:underline font-body-sm text-body-sm" href="#">Privacy Policy</a>
+<a class="text-surface-variant hover:text-white underline-offset-4 hover:underline font-body-sm text-body-sm" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-label-md text-label-md text-primary-fixed mb-sm">Connect</h4>
+<div class="flex gap-md">
+<button class="p-2 bg-surface-variant/10 rounded-full hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-md">share</span>
+</button>
+<button class="p-2 bg-surface-variant/10 rounded-full hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-md">mail</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-lg py-md border-t border-outline border-opacity-20 text-center">
+<p class="font-body-sm text-body-sm opacity-50">© 2024 MediSearch Healthcare Ecosystem. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for the carousel
+        const scrollContainer = document.querySelector('.snap-x');
+        const nextBtn = document.querySelectorAll('button')[2]; // Simplistic selector for demo
+        const prevBtn = document.querySelectorAll('button')[1];
+
+        // Real buttons logic would go here
+    </script>
+</body></html>

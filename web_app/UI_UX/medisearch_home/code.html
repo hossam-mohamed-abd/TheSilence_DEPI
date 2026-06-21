@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediSearch | AI-Powered Healthcare Discovery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #003d9b 0%, #006b59 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#233144",
+                        "surface-container-highest": "#d5e3fd",
+                        "surface-container-high": "#dde9ff",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-tertiary-container": "#ffc6b2",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#0d1c2f",
+                        "tertiary-fixed": "#ffdbcf",
+                        "outline-variant": "#c3c6d6",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#7b2600",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#5ddbbe",
+                        "outline": "#737685",
+                        "on-secondary-fixed-variant": "#005143",
+                        "on-surface-variant": "#434654",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary": "#006b59",
+                        "surface-tint": "#0c56d0",
+                        "inverse-primary": "#b2c5ff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary": "#003d9b",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#0052cc",
+                        "secondary-container": "#7cf8da",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-container": "#a33500",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d5e3fd",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#ccdbf4",
+                        "on-secondary-fixed": "#00201a",
+                        "primary-fixed": "#dae2ff",
+                        "secondary-fixed": "#7cf8da",
+                        "on-background": "#0d1c2f",
+                        "on-secondary-container": "#00725f",
+                        "surface-container": "#e6eeff",
+                        "on-primary-fixed": "#001848",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "base": "4px",
+                        "xxl": "48px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-background">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-inverse-primary cursor-pointer">MediSearch</span>
+<div class="hidden md:flex gap-lg">
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-label-md" href="#">Search</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim font-label-md transition-colors duration-200" href="#">About</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim font-label-md transition-colors duration-200" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="px-md py-sm rounded-lg font-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200">Login</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-lg py-sm rounded-lg font-label-md transition-all duration-200 active:scale-[0.99] active:opacity-80">Sign up</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-surface py-xxl md:py-[100px]">
+
+<div class="relative max-w-container-max mx-auto px-lg text-center flex flex-col items-center">
+<span class="bg-secondary-container text-on-secondary-container px-md py-xs rounded-full font-label-sm mb-md inline-block">Next-Gen Pharma Intelligence</span>
+<h1 class="font-headline-xl text-headline-xl md:text-6xl text-on-surface max-w-4xl mb-lg">
+                    Your <span class="text-gradient">AI-Powered Gateway</span> to Healthcare and Meds
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-xl">
+                    Instantly find prescriptions, compare localized pricing, and discover AI-validated alternatives for any drug in seconds.
+                </p>
+<!-- Large Search Bar -->
+<div class="w-full max-w-2xl relative">
+<div class="flex items-center bg-surface-container-lowest border-2 border-outline-variant focus-within:border-primary rounded-2xl p-sm shadow-lg transition-all duration-300">
+<span class="material-symbols-outlined text-primary ml-md" data-icon="search">search</span>
+<input class="w-full border-none focus:ring-0 bg-transparent py-md px-md text-body-lg font-body-lg placeholder:text-outline" placeholder="Search for drugs, symptoms, or pharmacies..." type="text"/>
+<button class="bg-primary text-on-primary px-xl py-md rounded-xl font-label-md flex items-center gap-sm">
+                            Find Now
+                        </button>
+</div>
+<div class="mt-md flex flex-wrap justify-center gap-sm">
+<span class="text-body-sm text-on-surface-variant">Popular searches:</span>
+<a class="text-primary hover:underline font-label-sm" href="#">Metformin</a>
+<a class="text-primary hover:underline font-label-sm" href="#">Lisinopril</a>
+<a class="text-primary hover:underline font-label-sm" href="#">Amoxicillin</a>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Search & Discovery Section -->
+<section class="py-xxl bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-lg">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xxl items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-md">AI Search &amp; Discovery</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xl">
+                            Our proprietary Medi-LLM scans thousands of clinical papers and real-time inventory to provide personalized medication recommendations based on your history and symptoms.
+                        </p>
+<div class="space-y-md">
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined p-base bg-secondary-container text-on-secondary-container rounded-lg" data-icon="auto_awesome">auto_awesome</span>
+<div>
+<h4 class="font-label-md text-on-surface">Intelligent Alternatives</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Find generic equivalents or therapeutically similar medications.</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined p-base bg-secondary-container text-on-secondary-container rounded-lg" data-icon="analytics">analytics</span>
+<div>
+<h4 class="font-label-md text-on-surface">Clinical Validation</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Every recommendation is cross-referenced with FDA and medical journals.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative rounded-xxl overflow-hidden shadow-xl border border-outline-variant aspect-video">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10"></div>
+<img class="w-full h-full object-cover" data-alt="A futuristic medical user interface showing a digital dashboard with 3D molecular structures of medicine and streaming clinical data. The interface uses a professional palette of clinical blues and soft greens, with a high-trust, minimalist aesthetic and sharp digital typography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIXsVd1YHQ5fdv8TqUcsVXnCRQeKAiDgLSMXKGmUwkwxJZv_gwAEYTy1bxiS2X0SW7bfUS6P1EESSLz7uSs_ee0CYQsmj9ggHbI9_MVvrfGS6CvWeOPLnDbeYeJKQ0TF5DoxyoDsja2hQ0-IeataYzdEbqSSRw2A02_UNRFeFXQ1vApRzi9gyFARjsqAtMhG-mw3o4cqdovgo3RWd-og3aOcxWdvXkWMCiju40PX8W00hvDKmZCHb_IzyK9e-39p0HVW21Okt9wwGo"/>
+<div class="absolute bottom-md left-md right-md glass-card p-md rounded-xl border border-white/20 animate-float">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-sm text-primary">MediSearch Insight</span>
+<span class="text-xs text-on-secondary bg-secondary px-sm rounded-full">98% Match</span>
+</div>
+<p class="text-xs text-on-surface italic">"Based on your profile, Medication B offers identical efficacy with 40% lower cost at your local pharmacy."</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Price Comparison Bento Grid -->
+<section class="py-xxl bg-surface">
+<div class="max-w-container-max mx-auto px-lg">
+<div class="text-center mb-xxl">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Unbeatable Transparency</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Compare prices across thousands of pharmacies in real-time. Don't pay more than you have to.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg h-auto md:h-[600px]">
+<!-- Main Card -->
+<div class="md:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xxl p-xl flex flex-col justify-between shadow-sm hover:-translate-y-1 transition-all duration-300">
+<div>
+<div class="flex justify-between items-center mb-xl">
+<h3 class="font-headline-md text-headline-md text-on-surface">Price Comparison Engine</h3>
+<span class="material-symbols-outlined text-secondary text-4xl" data-icon="payments">payments</span>
+</div>
+<div class="space-y-md">
+<div class="flex items-center justify-between p-md border border-outline-variant rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-outline-variant font-bold text-primary">CVS</div>
+<div>
+<p class="font-label-md text-on-surface">CVS Pharmacy</p>
+<p class="text-xs text-on-surface-variant">0.8 miles away</p>
+</div>
+</div>
+<p class="font-headline-md text-primary">$45.00</p>
+</div>
+<div class="flex items-center justify-between p-md border-2 border-secondary rounded-xl bg-secondary-container">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-outline-variant font-bold text-secondary">WG</div>
+<div>
+<p class="font-label-md text-on-surface">Walgreens</p>
+<p class="text-xs text-on-surface-variant">1.2 miles away • Best Deal</p>
+</div>
+</div>
+<p class="font-headline-md text-on-secondary-container">$32.50</p>
+</div>
+<div class="flex items-center justify-between p-md border border-outline-variant rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-outline-variant font-bold text-primary">RX</div>
+<div>
+<p class="font-label-md text-on-surface">Rite Aid</p>
+<p class="text-xs text-on-surface-variant">2.5 miles away</p>
+</div>
+</div>
+<p class="font-headline-md text-primary">$48.20</p>
+</div>
+</div>
+</div>
+<p class="mt-xl font-body-sm text-body-sm text-on-surface-variant italic">Prices updated 2 minutes ago across 24 local vendors.</p>
+</div>
+<!-- Side Stack -->
+<div class="flex flex-col gap-lg">
+<div class="flex-1 bg-primary text-on-primary rounded-xxl p-xl shadow-lg flex flex-col justify-between hover:scale-[1.02] transition-all">
+<span class="material-symbols-outlined text-4xl" data-icon="savings">savings</span>
+<div>
+<h4 class="font-headline-md text-headline-md mb-xs">Save up to 80%</h4>
+<p class="text-on-primary-container font-body-sm">Our community users saved over $2.4M last year using coupon integration.</p>
+</div>
+</div>
+<div class="flex-1 bg-secondary text-on-secondary rounded-xxl p-xl shadow-lg flex flex-col justify-between hover:scale-[1.02] transition-all">
+<span class="material-symbols-outlined text-4xl" data-icon="history">history</span>
+<div>
+<h4 class="font-headline-md text-headline-md mb-xs">Price History</h4>
+<p class="text-on-secondary-container font-body-sm">Track cost fluctuations and get notified when your meds drop in price.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Nearby Pharmacies & Map Section -->
+<section class="py-xxl bg-surface-container-low">
+<div class="max-w-container-max mx-auto px-lg">
+<div class="flex flex-col lg:flex-row gap-xl items-stretch h-full">
+<div class="w-full lg:w-1/3">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-md">Nearby Pharmacies</h2>
+<div class="space-y-md overflow-y-auto max-h-[500px] pr-sm custom-scrollbar">
+<!-- Pharmacy Item -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant hover:border-primary cursor-pointer transition-all">
+<div class="flex justify-between items-start mb-base">
+<h4 class="font-label-md text-on-surface">HealthyLife Pharmacy</h4>
+<span class="bg-secondary/10 text-secondary text-[10px] px-sm py-0.5 rounded uppercase font-bold">In Stock</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-sm">123 Medical Way, Downtown</p>
+<div class="flex items-center gap-md">
+<span class="flex items-center gap-xs text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> Open until 10 PM
+                                    </span>
+<span class="flex items-center gap-xs text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="directions_walk">directions_walk</span> 5 min
+                                    </span>
+</div>
+</div>
+<!-- Repeat for more pharmacies -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant hover:border-primary cursor-pointer transition-all">
+<div class="flex justify-between items-start mb-base">
+<h4 class="font-label-md text-on-surface">Community Care RX</h4>
+<span class="bg-error/10 text-error text-[10px] px-sm py-0.5 rounded uppercase font-bold">Low Stock</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-sm">456 Wellness Blvd, East Side</p>
+<div class="flex items-center gap-md">
+<span class="flex items-center gap-xs text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> Open until 9 PM
+                                    </span>
+<span class="flex items-center gap-xs text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="directions_car">directions_car</span> 12 min
+                                    </span>
+</div>
+</div>
+<!-- More placeholder items -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant hover:border-primary cursor-pointer transition-all opacity-70">
+<h4 class="font-label-md text-on-surface">West Side Medicinals</h4>
+<p class="text-xs text-on-surface-variant mb-sm">789 Broadway St</p>
+<span class="bg-secondary/10 text-secondary text-[10px] px-sm py-0.5 rounded uppercase font-bold">In Stock</span>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-2/3 min-h-[400px] rounded-xxl overflow-hidden shadow-inner border border-outline-variant relative">
+<div class="absolute inset-0 bg-surface-variant/30 flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist vector map of a metropolitan city center in a medical software style. The map features soft gray roads, subtle light blue water areas, and prominent pulsing medical cross icons in teal representing pharmacies. The aesthetic is modern and high-utility with a focused, clinical color palette." data-location="New York" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR4So-CD3AY5hojsqEYiQxQ7PK7FiQsk0qdV7lyX42-aAQu13OBF655XAPuypLLsuZFLDIGgHtbcp7Luwo7yBfb48AG6uAad5Fl8dqCShRXCPSCGx83kI0TeFtN-pXJK277Q7Uz8TcIs-eMIuzhU8z-SQHmvZPWtZJnZXGY-wuLtRx--wgnYAZo72KBHFnmK8my9a4h9abbUH16PeYVcLDso9kN2qBjd5u_PZnkrb78zcgxNtYr4EYnsmmF_5uTbudZ5dSl5O9lG8e"/>
+</div>
+<div class="absolute top-md right-md flex flex-col gap-sm">
+<button class="bg-white p-sm rounded-lg shadow-md hover:bg-surface-container-low"><span class="material-symbols-outlined" data-icon="add">add</span></button>
+<button class="bg-white p-sm rounded-lg shadow-md hover:bg-surface-container-low"><span class="material-symbols-outlined" data-icon="remove">remove</span></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="py-xxl bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-lg">
+<div class="text-center mb-xxl">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Powerful Tools for Patients</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-xl">
+<div class="p-lg bg-surface border border-outline-variant rounded-xl hover:shadow-lg transition-all text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-md" data-icon="real_time_efficiency">send_time_extension</span>
+<h4 class="font-headline-md text-on-surface mb-sm">Real-time Stock</h4>
+<p class="font-body-sm text-on-surface-variant">Live inventory sync with local pharmacies so you never waste a trip.</p>
+</div>
+<div class="p-lg bg-surface border border-outline-variant rounded-xl hover:shadow-lg transition-all text-center">
+<span class="material-symbols-outlined text-4xl text-secondary mb-md" data-icon="published_with_changes">published_with_changes</span>
+<h4 class="font-headline-md text-on-surface mb-sm">AI Alternatives</h4>
+<p class="font-body-sm text-on-surface-variant">Instantly discover safe, cost-effective generic alternatives.</p>
+</div>
+<div class="p-lg bg-surface border border-outline-variant rounded-xl hover:shadow-lg transition-all text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-md" data-icon="monitoring">monitoring</span>
+<h4 class="font-headline-md text-on-surface mb-sm">Price History</h4>
+<p class="font-body-sm text-on-surface-variant">Visual charts showing the 12-month cost trend for your prescriptions.</p>
+</div>
+<div class="p-lg bg-surface border border-outline-variant rounded-xl hover:shadow-lg transition-all text-center">
+<span class="material-symbols-outlined text-4xl text-secondary mb-md" data-icon="verified_user">verified_user</span>
+<h4 class="font-headline-md text-on-surface mb-sm">Med Alerts</h4>
+<p class="font-body-sm text-on-surface-variant">Instant notifications for dosage reminders and recall alerts.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-xxl bg-surface">
+<div class="max-w-container-max mx-auto px-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface text-center mb-xxl">Trusted by Healthcare Professionals</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl">
+<div class="p-xl bg-surface-container-lowest rounded-xxl border border-outline-variant flex flex-col justify-between">
+<p class="italic text-on-surface-variant mb-xl">"MediSearch has completely changed how I help my patients find their medication. The real-time price comparison is consistently accurate."</p>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Portrait of a smiling professional female pharmacist in her 40s wearing a white lab coat in a clean, modern pharmacy setting. The lighting is bright and professional, with a soft blur on the pharmaceutical shelves in the background. High-trust healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWuuS-clwq0sUWSHp1wtlYlD2TGOfc2ZKMPWnUOChaajgvqK41kWSd_FR5e6wNXTiFycZCj-PRz5_NOJmxs_bvRzjn5sD6v7HT6IGRa0NJz5_Uumq437GTZ9esGcMxldBtGEZVhlypqhzaBVrZ0A9zlt4SZxU-BSDVJtNjKwDmgLj6486_FoWVn4Rl1E-K3WIVdZivnXIZG3Bcs53udm0navotwzrDnukEovKc3XLoKLmUV2sz9Eqxi4yQGHYDDfVB014ieWyH3gyT"/>
+</div>
+<div>
+<p class="font-label-md text-on-surface">Sarah J. Miller</p>
+<p class="text-xs text-on-surface-variant">Chief Pharmacist, HealthCare First</p>
+</div>
+</div>
+</div>
+<div class="p-xl bg-surface-container-lowest rounded-xxl border border-outline-variant flex flex-col justify-between">
+<p class="italic text-on-surface-variant mb-xl">"As a patient with multiple prescriptions, this app saves me nearly $200 every month. The AI recommendations for generics are brilliant."</p>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Portrait of a middle-aged man with a kind and approachable expression, wearing a casual sweater in a warm, home-like setting. Soft natural lighting creates an empathetic and trustworthy patient testimonial vibe. High-quality portrait photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYAvwPxe8slQSXVPrl9NzLq1ialpZiWlQPrH9jdAFd9Of40J2wruDb0WLm4XgdveI7GP55eADvarYURKUnDnr3qTgYWjmVoeiFUXW_41_lua9LI02H17OynwUR3BIuOfpkZJFx3jFel-Z1lnIdJXz41ywGY7VcOvvoAIHE2bhNiMEf-yYCOfzN-IqN5BL6xolikqKzi6LXSNrU6ldoHljsn7euzZYFMgH49bKTPm1mJLRdsS6dSj-26etpU2H1OAWla9-9ZCuOJM0x"/>
+</div>
+<div>
+<p class="font-label-md text-on-surface">David Chen</p>
+<p class="text-xs text-on-surface-variant">Active User since 2023</p>
+</div>
+</div>
+</div>
+<div class="p-xl bg-surface-container-lowest rounded-xxl border border-outline-variant flex flex-col justify-between">
+<p class="italic text-on-surface-variant mb-xl">"The API integration for local stock is seamless. It helps us manage our foot traffic and ensures patients get what they need immediately."</p>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="A professional male doctor in his 50s with grey hair, wearing a stethoscope around his neck and a crisp white shirt. He is looking confidently at the camera in a modern clinical office environment. Bright, clean, corporate medical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXBS8nXz1KMmWw1o2OYr64jTF82JE6mzgGGOvo9WxQXr2b-T88s4dXzgizFgjLWsxxnJyQXnvO4qa5MBamvf9Tok3kldRpzjJiJrH9PlaS6VW--nOlQk4dpyeF1JuvxvUn1sx_5at-9SG-y1ekaEP6rJuOfTSQY0H4Zpl0UwZcmU8eztD_BS2gwmh4Sy_W_ZhVlMyGMN-ui3J9MHrgFY1M0m-iiXVm3Jg63so5u7XOkaIxKdC2weI7i-Ik2Z1suDVWrwtaL9CxYKa-"/>
+</div>
+<div>
+<p class="font-label-md text-on-surface">Dr. Mark Thompson</p>
+<p class="text-xs text-on-surface-variant">General Practitioner</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Professional FAQ -->
+<section class="py-xxl bg-surface-container-lowest">
+<div class="max-w-3xl mx-auto px-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface text-center mb-xl">Frequently Asked Questions</h2>
+<div class="space-y-md">
+<div class="border border-outline-variant rounded-xl overflow-hidden">
+<button class="w-full flex justify-between items-center p-lg bg-surface hover:bg-surface-container-low text-left transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+<span class="font-label-md text-on-surface">How accurate is the pricing data?</span>
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+<div class="p-lg border-t border-outline-variant bg-white hidden">
+<p class="text-on-surface-variant font-body-sm">Our pricing data is refreshed every 5-15 minutes via direct API links with national pharmacy chains and local regional vendors to ensure the highest degree of accuracy.</p>
+</div>
+</div>
+<div class="border border-outline-variant rounded-xl overflow-hidden">
+<button class="w-full flex justify-between items-center p-lg bg-surface hover:bg-surface-container-low text-left transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+<span class="font-label-md text-on-surface">Is my medical data secure?</span>
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+<div class="p-lg border-t border-outline-variant bg-white hidden">
+<p class="text-on-surface-variant font-body-sm">Yes. We are 100% HIPAA compliant and use AES-256 bit encryption. We never sell your personal medical data to third parties.</p>
+</div>
+</div>
+<div class="border border-outline-variant rounded-xl overflow-hidden">
+<button class="w-full flex justify-between items-center p-lg bg-surface hover:bg-surface-container-low text-left transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden')">
+<span class="font-label-md text-on-surface">Can I buy medications directly through MediSearch?</span>
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+<div class="p-lg border-t border-outline-variant bg-white hidden">
+<p class="text-on-surface-variant font-body-sm">MediSearch is a discovery and comparison platform. While we provide links to reserve stock or buy online through partner pharmacies, the final transaction occurs with the licensed pharmacy.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-xxl bg-primary text-on-primary text-center">
+<div class="max-w-container-max mx-auto px-lg">
+<h2 class="font-headline-xl text-headline-xl mb-md">Ready to Save on Your Health?</h2>
+<p class="font-body-lg mb-xl max-w-xl mx-auto opacity-90">Join 500,000+ users who are navigating healthcare smarter, faster, and cheaper with MediSearch AI.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-md">
+<button class="bg-secondary-container text-on-secondary-container px-xxl py-md rounded-xl font-headline-md hover:scale-105 transition-transform">Get Started Free</button>
+<button class="border border-on-primary text-on-primary px-xxl py-md rounded-xl font-headline-md hover:bg-white/10 transition-all">Schedule a Demo</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface dark:bg-surface-container-lowest border-t border-outline dark:border-outline-variant text-surface-container-highest dark:text-primary">
+<div class="w-full py-xxl px-lg grid grid-cols-1 md:grid-cols-4 gap-xl max-w-container-max mx-auto">
+<div class="flex flex-col gap-md">
+<span class="font-headline-md text-headline-md font-bold text-surface-container-lowest dark:text-primary">MediSearch</span>
+<p class="font-body-sm text-surface-variant">The future of healthcare transparency and medication management powered by ethical AI.</p>
+</div>
+<div>
+<h5 class="font-label-md mb-md">Product</h5>
+<ul class="space-y-sm font-body-sm">
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Features</a></li>
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Pricing</a></li>
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Mobile App</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md mb-md">Resources</h5>
+<ul class="space-y-sm font-body-sm">
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">API Documentation</a></li>
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Help Center</a></li>
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Health Blog</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md mb-md">Legal</h5>
+<ul class="space-y-sm font-body-sm">
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Privacy Policy</a></li>
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">Terms of Service</a></li>
+<li><a class="text-surface-variant dark:text-on-surface-variant hover:text-white dark:hover:text-primary transition-all duration-300 underline-offset-4 hover:underline" href="#">HIPAA Compliance</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-lg py-xl border-t border-outline/30 text-center md:text-left">
+<p class="font-body-sm text-surface-variant">© 2024 MediSearch Healthcare Ecosystem. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Simple smooth scroll and intersection observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(section);
+        });
+    </script>
+</body></html>
