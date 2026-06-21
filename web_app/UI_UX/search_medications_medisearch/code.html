@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Drug Search Results | MediSearch</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#233144",
+                        "surface-container-highest": "#d5e3fd",
+                        "surface-container-high": "#dde9ff",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-tertiary-container": "#ffc6b2",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#0d1c2f",
+                        "tertiary-fixed": "#ffdbcf",
+                        "outline-variant": "#c3c6d6",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#7b2600",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#5ddbbe",
+                        "outline": "#737685",
+                        "on-secondary-fixed-variant": "#005143",
+                        "on-surface-variant": "#434654",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary": "#006b59",
+                        "surface-tint": "#0c56d0",
+                        "inverse-primary": "#b2c5ff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary": "#003d9b",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#0052cc",
+                        "secondary-container": "#7cf8da",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-container": "#a33500",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d5e3fd",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#ccdbf4",
+                        "on-secondary-fixed": "#00201a",
+                        "primary-fixed": "#dae2ff",
+                        "secondary-fixed": "#7cf8da",
+                        "on-background": "#0d1c2f",
+                        "on-secondary-container": "#00725f",
+                        "surface-container": "#e6eeff",
+                        "on-primary-fixed": "#001848",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "base": "4px",
+                        "xxl": "48px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">MediSearch</span>
+<nav class="hidden md:flex gap-lg">
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="#">Search</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">About</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Contact</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="font-label-md text-label-md px-md py-sm rounded-lg text-primary hover:bg-surface-container-low transition-colors duration-200">Login</button>
+<button class="font-label-md text-label-md px-md py-sm rounded-lg bg-primary text-on-primary hover:opacity-90 active:scale-[0.99] transition-all">Sign up</button>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-container-max mx-auto w-full px-lg py-xl">
+<div class="flex flex-col md:flex-row gap-xl">
+<!-- Sidebar: Filters -->
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-lg sticky top-[100px]">
+<div class="flex items-center justify-between mb-xl">
+<h2 class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Filters</h2>
+<button class="text-primary font-label-sm text-label-sm hover:underline">Reset</button>
+</div>
+<!-- Price Range -->
+<div class="mb-xl">
+<label class="font-label-md text-label-md block mb-sm">Price Range</label>
+<input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between mt-sm text-on-surface-variant font-label-sm text-label-sm">
+<span>$0</span>
+<span>$500+</span>
+</div>
+</div>
+<!-- Distance -->
+<div class="mb-xl">
+<label class="font-label-md text-label-md block mb-sm">Distance (miles)</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-sm py-xs font-body-sm text-body-sm focus:ring-2 focus:ring-primary focus:outline-none">
+<option>Within 5 miles</option>
+<option>Within 10 miles</option>
+<option>Within 25 miles</option>
+<option>Any distance</option>
+</select>
+</div>
+<!-- Pharmacy -->
+<div class="mb-xl">
+<label class="font-label-md text-label-md block mb-sm">Pharmacy</label>
+<div class="space-y-sm">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm group-hover:text-primary transition-colors">CVS Pharmacy</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input checked="" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm group-hover:text-primary transition-colors">Walgreens</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm group-hover:text-primary transition-colors">Rite Aid</span>
+</label>
+</div>
+</div>
+<!-- Dosage -->
+<div class="mb-xl">
+<label class="font-label-md text-label-md block mb-sm">Dosage</label>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-xs rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm hover:border-primary transition-colors">10mg</button>
+<button class="px-md py-xs rounded-full border border-primary bg-primary-container text-on-primary-container font-label-sm text-label-sm">20mg</button>
+<button class="px-md py-xs rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm hover:border-primary transition-colors">40mg</button>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-sm rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">Apply Filters</button>
+</div>
+</aside>
+<!-- Main Results Area -->
+<section class="flex-grow space-y-lg">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md mb-xl">
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Search Results</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Showing 14 results for "Atorvastatin"</p>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low p-base rounded-lg border border-outline-variant">
+<span class="font-label-sm text-label-sm pl-md pr-sm text-on-surface-variant">Sort by:</span>
+<select class="bg-transparent border-none focus:ring-0 font-label-md text-label-md py-xs pr-lg cursor-pointer">
+<option>Lowest Price</option>
+<option>Closest Distance</option>
+<option>Popularity</option>
+</select>
+</div>
+</div>
+<!-- Bento Grid / Cards Container -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-lg">
+<!-- Result Card 1: AI Recommended -->
+<div class="relative bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+<div class="absolute -top-3 left-4 bg-tertiary text-on-tertiary px-md py-1 rounded-full flex items-center gap-xs shadow-md">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span class="font-label-sm text-label-sm">AI Recommended Alternative</span>
+</div>
+<div class="flex justify-between items-start mt-2">
+<div class="flex gap-md">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A clean, medical product photography of a pill bottle and individual white oval tablets against a soft blue clinical background. The lighting is bright and professional, suggesting trust and high-quality pharmaceutical standards in a modern healthcare setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVkJK5B70_PZBMApQSYWgIk02pYSWIyLvoI1CeWpPktlrXvbSLIBwVzlyK1rZQTFQCuRVXxVPVmosxZq8rpLqQVLPKPFaVHknG6yaqMUETQMhhidWevY3dR-1Hc0E7e7uSjQ0Pa9Mv9YGloExdYMDggrVfufsrWl3kqrd-x4sQDH1_UAd3fSk1f3c6p9uPT_2pZyLHgpPiAWAV7ow0LtDDxvnl1az8I3CJMwK3ESRaeUwZuynAflbXyn5CuwvdGTc_YpbZBpslfkDg"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Atorvastatin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">20mg • 30 Tablets</p>
+<div class="mt-sm flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold">In Stock</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline-md text-headline-md text-primary">$12.45</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant line-through">$34.00</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-md border-t border-outline-variant mt-auto">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">local_pharmacy</span>
+<span class="font-label-md text-label-md text-on-surface">Walgreens • 0.8 miles</span>
+</div>
+<div class="flex gap-sm">
+<button class="p-sm rounded-lg hover:bg-surface-container-high text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="px-md py-sm rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-all">Compare</button>
+</div>
+</div>
+</div>
+<!-- Result Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+<div class="flex justify-between items-start">
+<div class="flex gap-md">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Close up high-fidelity photography of generic blue medication capsules on a sterile white surface with soft grey shadows. The composition is minimalist and clinically clean, using a high-trust corporate medical aesthetic with precise clarity and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFPAowlmU7s4Nli-FpYyPX56UdsovMTuK8O6zI6I_8s-DrcuOcRvxhbbVFEU4rv2gx9bSrlB1zkPHx2gVo8WDsFYhjxMf7YDwu2FVKVPjTrs4eIx_bTxXNLbw3TOTk0yhsWvTbY2Q_4syFEK4OaNGeOgdAJc6dkiXIT6jz-HHLPVWABgf9XKFNBLmEr3IVeUgkG0jDT7o5jjyodkgHctmirwvh6vDurMpfNx6d_sk6EfUOvf0QhXTV06BB4yf0y5NNoxwZLhLDAtKt"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Lipitor</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">20mg • 30 Tablets</p>
+<div class="mt-sm flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold">In Stock</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline-md text-headline-md text-on-surface">$148.20</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-md border-t border-outline-variant mt-auto">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">local_pharmacy</span>
+<span class="font-label-md text-label-md text-on-surface">CVS Pharmacy • 1.2 miles</span>
+</div>
+<div class="flex gap-sm">
+<button class="p-sm rounded-lg hover:bg-surface-container-high text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="px-md py-sm rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-all">Compare</button>
+</div>
+</div>
+</div>
+<!-- Result Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+<div class="flex justify-between items-start">
+<div class="flex gap-md">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A clean pharmaceutical bottle with a simple white label displayed on a reflective white surface. The background is a soft gradient of healthcare blue and white. Professional studio lighting emphasizes the sharp corners and high-quality materials of the medical packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhpBf-EPPAVBwgVWAZdi_Mk7qaxSBQTJoj4I2r9v_xF4LVnOKUx4hM5TXnvpOp8hFtlNd5oj_uV-uf9N1QP1V08PzNbQaGResk0X4MYRHl9E_343wPCLuqEl7aCmsp7ALj8DG5gKxL7ND5JJYFKNtQXdQRaH8pedsGOUsFMEjrgsPyna_NRe9FJk-CLt8dan4fbbWSaXbFEMsMSmm4yu1F9SyLs6A7XVl1PBvwFWx7hMV5yVgYuTaDoCNCuS2syDAvi3B2D-0ml4HM"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Atorvastatin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">20mg • 30 Tablets</p>
+<div class="mt-sm flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold">In Stock</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline-md text-headline-md text-on-surface">$15.99</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-md border-t border-outline-variant mt-auto">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">local_pharmacy</span>
+<span class="font-label-md text-label-md text-on-surface">Rite Aid • 2.4 miles</span>
+</div>
+<div class="flex gap-sm">
+<button class="p-sm rounded-lg hover:bg-surface-container-high text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<button class="px-md py-sm rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-all">Compare</button>
+</div>
+</div>
+</div>
+<!-- Result Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+<div class="flex justify-between items-start">
+<div class="flex gap-md">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Detailed macro shot of small white pharmaceutical tablets being dispensed into a plastic medicine cup. Soft, diffused lighting creates a safe, medical atmosphere. The palette is dominated by sterile whites and very pale blues, representing modern pharmaceutical excellence and patient safety." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADUV09NvyTVMU_5nzzYebo_3McGUCmItjHQpdNR-FLh_A-6evKIHPCXDSeM3OJ4QWiEeBIwmmPRK0P8xQLcJsDgkBBGY46yRYE-tnVtWHsax-VaE4ccfKsdwFTnNXQKckWVIlJOHy9TdTsnFo0VyFzPu9idUwxOcMFJHzRkhaKBRljwvMMkfxkR6VwcaytnribkdKlgYOTn2aN69AX-fDMjXxTDUqxPFOW21ycnqVQS6w4j7yex_HPljsI-eiuggmC4vBa01Vwn-Vf"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Atorvastatin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">20mg • 30 Tablets</p>
+<div class="mt-sm flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold">In Stock</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline-md text-headline-md text-on-surface">$11.80</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-md border-t border-outline-variant mt-auto">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">local_pharmacy</span>
+<span class="font-label-md text-label-md text-on-surface">Local Apothecary • 4.1 miles</span>
+</div>
+<div class="flex gap-sm">
+<button class="p-sm rounded-lg hover:bg-surface-container-high text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="px-md py-sm rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-all">Compare</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center items-center gap-md py-xl">
+<button class="p-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md">1</button>
+<button class="w-10 h-10 rounded-lg border border-outline-variant hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors">2</button>
+<button class="w-10 h-10 rounded-lg border border-outline-variant hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors">3</button>
+<button class="p-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface text-surface-container-lowest border-t border-outline dark:border-outline-variant mt-xxl">
+<div class="w-full py-xxl px-lg grid grid-cols-1 md:grid-cols-4 gap-xl max-w-container-max mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-headline-md text-headline-md font-bold text-surface-container-lowest mb-md block">MediSearch</span>
+<p class="font-body-sm text-body-sm opacity-80">Empowering patients with transparent healthcare data and smart search tools.</p>
+</div>
+<div>
+<h4 class="font-label-md text-label-md uppercase mb-lg opacity-60">Company</h4>
+<ul class="space-y-md font-body-sm text-body-sm">
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">About Us</a></li>
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">Careers</a></li>
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md uppercase mb-lg opacity-60">Legal &amp; Support</h4>
+<ul class="space-y-md font-body-sm text-body-sm">
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">Terms of Service</a></li>
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">Help Center</a></li>
+<li><a class="hover:text-white transition-colors duration-300 underline-offset-4 hover:underline" href="#">API Documentation</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md uppercase mb-lg opacity-60">Newsletter</h4>
+<div class="flex gap-base">
+<input class="bg-surface-container-lowest/10 border border-white/20 rounded-lg px-md py-sm w-full font-body-sm text-body-sm focus:outline-none focus:border-primary" placeholder="Email" type="email"/>
+<button class="bg-primary text-on-primary px-md py-sm rounded-lg font-label-sm text-label-sm">Join</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-lg py-xl border-t border-white/10 text-center">
+<p class="font-body-sm text-body-sm opacity-60">© 2024 MediSearch Healthcare Ecosystem. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Basic micro-interactions
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-[0.98]');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-[0.98]');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-[0.98]');
+            });
+        });
+
+        // Simple Favorite Toggle Interaction
+        document.querySelectorAll('.material-symbols-outlined').forEach(icon => {
+            if (icon.textContent.includes('favorite')) {
+                icon.parentElement.addEventListener('click', () => {
+                    const isFilled = icon.style.fontVariationSettings.includes("'FILL' 1");
+                    icon.style.fontVariationSettings = isFilled ? "'FILL' 0" : "'FILL' 1";
+                    if (!isFilled) {
+                        icon.classList.add('text-error');
+                    } else {
+                        icon.classList.remove('text-error');
+                    }
+                });
+            }
+        });
+    </script>
+</body></html>

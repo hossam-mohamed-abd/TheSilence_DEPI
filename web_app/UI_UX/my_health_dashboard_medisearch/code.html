@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediSearch | Patient Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#233144",
+                        "surface-container-highest": "#d5e3fd",
+                        "surface-container-high": "#dde9ff",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-tertiary-container": "#ffc6b2",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#0d1c2f",
+                        "tertiary-fixed": "#ffdbcf",
+                        "outline-variant": "#c3c6d6",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#7b2600",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#5ddbbe",
+                        "outline": "#737685",
+                        "on-secondary-fixed-variant": "#005143",
+                        "on-surface-variant": "#434654",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary": "#006b59",
+                        "surface-tint": "#0c56d0",
+                        "inverse-primary": "#b2c5ff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary": "#003d9b",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#0052cc",
+                        "secondary-container": "#7cf8da",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-container": "#a33500",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d5e3fd",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#ccdbf4",
+                        "on-secondary-fixed": "#00201a",
+                        "primary-fixed": "#dae2ff",
+                        "secondary-fixed": "#7cf8da",
+                        "on-background": "#0d1c2f",
+                        "on-secondary-container": "#00725f",
+                        "surface-container": "#e6eeff",
+                        "on-primary-fixed": "#001848",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "base": "4px",
+                        "xxl": "48px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9ff;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-shadow {
+            box-shadow: 0 4px 12px -2px rgba(12, 86, 208, 0.2);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c3c6d6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<div class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-64 bg-surface-container-low border-r border-outline-variant p-md gap-sm shrink-0 z-50">
+<div class="flex items-center gap-md px-md py-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="health_and_safety">health_and_safety</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MediSearch</h1>
+</div>
+<nav class="flex flex-col gap-base mt-xl flex-grow">
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm font-bold active-nav-shadow transition-all duration-200 scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 rounded-lg px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-md text-label-md">Search</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 rounded-lg px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 rounded-lg px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 rounded-lg px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 rounded-lg px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-md border-t border-outline-variant flex flex-col gap-md">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional close-up headshot of David, a middle-aged male with a friendly expression. He has short dark hair and is wearing a clean, modern white linen shirt. The background is a soft-focus interior of a bright, contemporary medical office with minimalist aesthetics and cool blue lighting tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAToIJCskcpwvcd0KZ1YbzZ1Xnwn1M1frFeshhk8s55rZhdws-wY2bXgrQhNwVSolyKHl2wlHClSXECleAxRopQbUBGBzfeFgKTy9wXff_p_x57YPSE01sHsrsSndmlNi50JPvZPCOV14ZadneYaGE6pnZMwYS_hk5b6nu-K20MD5f0TrVUdPPVGX4-ZKhfU_LXXu9ljKsvGhGy3dzzkAPQ06HuMHJxmxKFzaxWNzN-NsXfHCO0BoXYDOsl38th7LoHu_rRZYY7yqJ"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">David Miller</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Patient Profile</span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary rounded-lg py-sm font-label-md hover:opacity-90 transition-opacity">
+                    Support
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-grow overflow-y-auto h-screen relative">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full bg-surface-container-lowest border-b border-outline-variant z-40 px-lg py-md flex justify-between items-center shadow-sm">
+<div class="flex items-center gap-md">
+<button class="md:hidden p-2 hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Dashboard</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex items-center bg-surface-container-low rounded-full px-md py-sm border border-outline-variant focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm w-64" placeholder="Search medications, pharmacies..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="hover:bg-surface-container-high rounded-full p-2 transition-all active:scale-90 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full border-2 border-surface-container-lowest"></span>
+</button>
+<button class="hover:bg-surface-container-high rounded-full p-2 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Content Container -->
+<div class="p-lg max-w-container-max mx-auto space-y-xl">
+<!-- Welcome Header -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div class="space-y-xs">
+<h3 class="font-headline-xl text-headline-xl text-on-surface">Good morning, David</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Here is a quick overview of your health status and pharmacy activity for today.</p>
+</div>
+<div class="flex items-center gap-sm bg-secondary-container text-on-secondary-container px-md py-sm rounded-xl">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+<span class="font-label-md text-label-md">Health Score: 94/100</span>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Medication Reminders (Simple list) -->
+<div class="md:col-span-4 glass-card rounded-xl p-lg flex flex-col h-full">
+<div class="flex justify-between items-center mb-md">
+<h4 class="font-headline-md text-headline-md text-on-surface">Daily Reminders</h4>
+<span class="material-symbols-outlined text-primary" data-icon="calendar_today">calendar_today</span>
+</div>
+<div class="space-y-md flex-grow">
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-lg border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="w-10 h-10 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center font-bold">8a</div>
+<div class="flex-grow">
+<p class="font-label-md text-label-md text-on-surface">Atorvastatin</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">20mg • With food</p>
+</div>
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-lg border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="w-10 h-10 bg-surface-variant text-on-surface-variant rounded-full flex items-center justify-center font-bold">1p</div>
+<div class="flex-grow">
+<p class="font-label-md text-label-md text-on-surface">Metformin</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">500mg • After meal</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-lg border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="w-10 h-10 bg-surface-variant text-on-surface-variant rounded-full flex items-center justify-center font-bold">8p</div>
+<div class="flex-grow">
+<p class="font-label-md text-label-md text-on-surface">Lisinopril</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">10mg • Before bed</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+</div>
+<button class="mt-lg text-primary font-label-md hover:underline flex items-center gap-xs">
+                            View full schedule <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<!-- AI Recommendations (Visual & Dynamic) -->
+<div class="md:col-span-8 glass-card rounded-xl overflow-hidden relative min-h-[300px] flex flex-col justify-end p-lg group">
+
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent -z-10"></div>
+<div class="relative z-10 space-y-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">MediSearch AI Suggestion</span>
+</div>
+<h4 class="font-headline-lg text-headline-lg text-on-surface leading-tight max-w-xl">Based on your recent search for Vitamin D, you might be interested in high-bioavailability Magnesium supplements to aid absorption.</h4>
+<div class="flex gap-md pt-md">
+<button class="bg-primary text-on-primary px-xl py-sm rounded-lg font-label-md shadow-md hover:shadow-lg transition-all active:scale-95">Explore Options</button>
+<button class="bg-surface-container-high text-on-surface px-xl py-sm rounded-lg font-label-md border border-outline-variant hover:bg-surface-container-highest transition-all">Dismiss</button>
+</div>
+</div>
+</div>
+<!-- Recent Searches (Grid) -->
+<div class="md:col-span-12 lg:col-span-7 space-y-md">
+<div class="flex justify-between items-center">
+<h4 class="font-headline-md text-headline-md text-on-surface">Recent Searches</h4>
+<button class="text-primary font-label-md">Clear All</button>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-md">
+<div class="p-md bg-white border border-outline-variant rounded-xl flex items-center justify-between group cursor-pointer hover:border-primary hover:shadow-sm transition-all">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Ibuprofen</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="p-md bg-white border border-outline-variant rounded-xl flex items-center justify-between group cursor-pointer hover:border-primary hover:shadow-sm transition-all">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Amoxicillin</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="p-md bg-white border border-outline-variant rounded-xl flex items-center justify-between group cursor-pointer hover:border-primary hover:shadow-sm transition-all">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Melatonin</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="p-md bg-white border border-outline-variant rounded-xl flex items-center justify-between group cursor-pointer hover:border-primary hover:shadow-sm transition-all">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Cough Syrup</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="p-md bg-white border border-outline-variant rounded-xl flex items-center justify-between group cursor-pointer hover:border-primary hover:shadow-sm transition-all">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Omeprazole</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="p-md bg-white border border-outline-variant rounded-xl flex items-center justify-between group cursor-pointer hover:border-primary hover:shadow-sm transition-all">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Vitamin B12</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="north_east">north_east</span>
+</div>
+</div>
+</div>
+<!-- Notification Feed -->
+<div class="md:col-span-12 lg:col-span-5 glass-card rounded-xl p-lg flex flex-col h-full">
+<div class="flex justify-between items-center mb-md">
+<h4 class="font-headline-md text-headline-md text-on-surface">Alerts &amp; Notifications</h4>
+<button class="hover:bg-surface-container-high rounded-full p-2 transition-all">
+<span class="material-symbols-outlined text-primary" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+<div class="space-y-sm flex-grow">
+<div class="flex gap-md p-md border-b border-outline-variant hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="shrink-0 w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_down">trending_down</span>
+</div>
+<div class="space-y-1">
+<p class="font-label-md text-label-md text-on-surface">Price drop on Atorvastatin</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Now $12.40 at Walgreens, down from $18.50.</p>
+<span class="text-[10px] text-outline font-bold uppercase tracking-wider">2 HOURS AGO</span>
+</div>
+</div>
+<div class="flex gap-md p-md border-b border-outline-variant hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="shrink-0 w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="inventory">inventory</span>
+</div>
+<div class="space-y-1">
+<p class="font-label-md text-label-md text-on-surface">Restock Alert: Ozempic 1mg</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Local CVS Pharmacy has confirmed new stock availability.</p>
+<span class="text-[10px] text-outline font-bold uppercase tracking-wider">5 HOURS AGO</span>
+</div>
+</div>
+<div class="flex gap-md p-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="shrink-0 w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="mail">mail</span>
+</div>
+<div class="space-y-1">
+<p class="font-label-md text-label-md text-on-surface">Monthly Health Digest</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your wellness summary for September is now available.</p>
+<span class="text-[10px] text-outline font-bold uppercase tracking-wider">YESTERDAY</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Favorite Medications (Price Cards) -->
+<div class="md:col-span-12 space-y-md">
+<div class="flex justify-between items-center">
+<h4 class="font-headline-md text-headline-md text-on-surface">Favorite Stores &amp; Current Prices</h4>
+<a class="text-primary font-label-md flex items-center gap-xs" href="#">View My Watchlist <span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Drug Card 1 -->
+<div class="glass-card rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="p-lg space-y-md">
+<div class="flex justify-between items-start">
+<div>
+<h5 class="font-headline-md text-headline-md text-on-surface">Lipitor</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Atorvastatin • 20mg Tablet</p>
+</div>
+<button class="text-tertiary">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center p-md bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-md bg-white p-1" data-alt="The logo of a national pharmacy chain like CVS or Walgreens, simplified with high-contrast colors on a clean white background, representative of a professional healthcare brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcSrcYeiDDWCo4dn2A5zeeeSYAULI68uFPxSyn0MogfCfiXgmye_-E0KRHR4fr2U_63vMgoZYgfveEjEihxaVFGgaXTyvfkOz-dWCRO9bXruNKXBuxpG8UfqNpf-uxnNvhPR1L2ac2Gz0H2kxHPbmhGJ19OoCUxf6XbFQpwmJ06FWRfXJRrXIXUZeIkyKkDGFEmK_bdwSCrAkE_IEsfDxSKnBF5V9TYATTx_rZNOb0fqbaWSs_yuqgQU_4bw3lU4A57_8ugoeDSoS4"/>
+<span class="font-label-md text-label-md">CVS Health</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">$14.99</span>
+</div>
+<div class="flex justify-between items-center p-md border border-outline-variant rounded-lg">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-md bg-white p-1" data-alt="A professional logo of a grocery store pharmacy like Costco or Kroger, designed with a clean and trustworthy medical-themed palette of deep blues and surgical whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC18Ds3yItCghG-ajLv2OU9ild_Ehp3e8mHwK0V6qoTw0_eBQnDuifXgqCf-fsSQT8WWn3JeQQSrtFEOTPkE1_eTMq1JdRqeH6kD_t8Y2oHynSAfuNyfw6Cpw85sNeOS9s29yGlMvMV3qugzbs0KdDE64g-_hbdAQt9-oyv7FB2v-82B--jtH-dzXtbE6ykTf9wx-hKwgixhOoQGimbpxAZ3o77Q4Gs8nKPouxKk7NA491hh5bA_bL82foCf7tAE-lG2Dgrkz-p1Ie2"/>
+<span class="font-label-md text-label-md">Walgreens</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary font-bold">$12.40</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high px-lg py-sm flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="local_shipping">local_shipping</span> 
+                                        In Stock Locally
+                                    </span>
+<button class="text-primary font-label-md">View Store Map</button>
+</div>
+</div>
+<!-- Drug Card 2 -->
+<div class="glass-card rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="p-lg space-y-md">
+<div class="flex justify-between items-start">
+<div>
+<h5 class="font-headline-md text-headline-md text-on-surface">Ventolin HFA</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Albuterol • Inhaler</p>
+</div>
+<button class="text-tertiary">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center p-md bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-md bg-white p-1" data-alt="Professional logo for a pharmaceutical retail company, using simple geometric shapes and a modern sans-serif font in medical blue and white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpUVY6_GGVRBRm2VMJ6-R7Yirg5ckGFhCBzEgvVT9cRhfF-j5kVkdBpmrFt9GiJ7vMxGw6Nijn9wP2LmMY6ZavE0ESjXUNu42QlVEjg70b6A3CidFVudGbGpXErodb2TuFDAZKjxq15nD6u8r6_p5YCP1yAg9WHGVWVi5YntugkvFj0UJMrNSjc7QKuldQ9wmqgP3kCzU8Xzj7ytXLXsCJBY4VYwx6jIagNEVHgAX4YQBPB4aCfvUAch47V5BXNqwMnC-7wg5zVvs9"/>
+<span class="font-label-md text-label-md">Costco Pharmacy</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary font-bold">$48.00</span>
+</div>
+<div class="flex justify-between items-center p-md border border-outline-variant rounded-lg">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-md bg-white p-1" data-alt="A clean corporate logo for a supermarket pharmacy chain, featuring high-quality design elements and a trustworthy healthcare-focused color scheme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTV9V7LqzFfA5ADLth6OTR_sLnYLMj3-TwCivASnMf0oW8qoT_yvaUDNo4NlWPhba_-9b0SFGIuoU2pqJd1v2kayGsoo1fHOZF3nOAnLk18xtbG0hZDkGGgvVOEOI2x5OKcpKE-BX0zwFaA1xCMZQUVkKQhr3noATRl-_TxJasfyiuZ75EYGxXQ16-WPPFinznYevSk6kUH4PAEGdbTxYJ_mkBJ13xFjdzIkhySMGP1z2FEzhHCu-aURiSn91WsALJNFzOq9llrTqB"/>
+<span class="font-label-md text-label-md">Walmart Rx</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">$52.15</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high px-lg py-sm flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="info">info</span> 
+                                        Low Stock Alert
+                                    </span>
+<button class="text-primary font-label-md">Refill Now</button>
+</div>
+</div>
+<!-- Drug Card 3 -->
+<div class="glass-card rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="p-lg space-y-md">
+<div class="flex justify-between items-start">
+<div>
+<h5 class="font-headline-md text-headline-md text-on-surface">Zyrtec</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cetirizine • 10mg Allergy Relief</p>
+</div>
+<button class="text-tertiary">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center p-md bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-md bg-white p-1" data-alt="Simplified health and pharmacy brand logo with minimalist icon and professional blue and teal typography, presented on a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNhdJganclEMt81JNWHJnmFghPaSqFdzr_luCOQ896ZBvXuQ2BgtEBjpb8GQE3kc1iRxoh-MMgbb7IcYZrdScDwjMyJ18SMB4VmpQg-09N64w3lOWr67atiUbkgKeYclZYa0jghinCXBlbXF5gfYrOQ5x2XJyI1Bae-XnFYEWGOKuurLwirGgv1r1XwGgEpgRnMNGTtv_DoYO3mW8Ks7Ex7fg52CrWqP3DAAaNe-ce8hnE_CNBfULM8klV2X1rKvLYUeJnorbDBhh_"/>
+<span class="font-label-md text-label-md">Rite Aid</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary font-bold">$19.99</span>
+</div>
+<div class="flex justify-between items-center p-md border border-outline-variant rounded-lg">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-md bg-white p-1" data-alt="A generic professional pharmaceutical company logo, showing clean lines and medical-grade aesthetics with high-contrast corporate colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv3YumEQr7cSTukJAv-G6jxqZplFC0IWvkgm21XACrnhK6yyj5f6M6wYilQv56QyF3V3CrEGOyWlzUgsM7FfyYUIsDEr-UT6-IxCu35tiWCtOHKVoFMIK6DSCOmbl5xwK4eGATRHdvcj5cPTSa4quJeGwB0urWLyB91euYwij7uCSaJ6jX1CV_02-gPokzQFY37L7gnS5wKRZGSOVucEHY2s1nvhCkzb52QpZ00hTUfRWtBbu2dFK1mhjpaEcc-Qcg1FC7uc-Xkc0E"/>
+<span class="font-label-md text-label-md">Target Rx</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">$21.50</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high px-lg py-sm flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified">verified</span> 
+                                        Coupon Applied
+                                    </span>
+<button class="text-primary font-label-md">View Coupon</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-xxl bg-inverse-surface text-surface-container-highest border-t border-outline">
+<div class="max-w-container-max mx-auto py-xxl px-lg grid grid-cols-1 md:grid-cols-4 gap-xl">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-md mb-md">
+<span class="material-symbols-outlined text-surface-container-lowest text-2xl" data-icon="health_and_safety">health_and_safety</span>
+<h2 class="font-headline-md text-headline-md font-bold text-surface-container-lowest">MediSearch</h2>
+</div>
+<p class="font-body-sm text-body-sm text-surface-variant max-w-xs">
+                            Empowering patients with transparent pharmaceutical data and smart health insights since 2024.
+                        </p>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md text-white mb-sm">Ecosystem</span>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">Drug Database</a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">Pharmacy Partners</a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">Health Articles</a>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md text-white mb-sm">Legal &amp; Support</span>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">Help Center</a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white hover:underline underline-offset-4 transition-all" href="#">API Documentation</a>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-label-md text-white mb-sm">Stay Updated</span>
+<div class="flex gap-sm">
+<input class="bg-surface-container-lowest/10 border border-outline rounded-lg px-md py-sm text-body-sm text-white focus:outline-none focus:ring-1 focus:ring-primary-fixed w-full" placeholder="Email address" type="email"/>
+<button class="bg-primary-fixed text-on-primary-fixed font-label-md px-md rounded-lg hover:bg-white transition-colors">Join</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-lg py-md border-t border-outline/30 flex justify-between items-center">
+<p class="font-body-sm text-body-sm text-surface-variant">© 2024 MediSearch Healthcare Ecosystem. All rights reserved.</p>
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-surface-variant hover:text-white cursor-pointer" data-icon="facebook">face_nod</span>
+<span class="material-symbols-outlined text-surface-variant hover:text-white cursor-pointer" data-icon="public">public</span>
+<span class="material-symbols-outlined text-surface-variant hover:text-white cursor-pointer" data-icon="share">share</span>
+</div>
+</div>
+</footer>
+</main>
+</div>
+<!-- Floating Action Button -->
+<button class="fixed bottom-lg right-lg w-16 h-16 bg-primary text-on-primary rounded-full shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined text-3xl" data-icon="medication">medication</span>
+<span class="absolute right-full mr-md bg-inverse-surface text-surface-container-lowest px-md py-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap text-label-md">Check New Price</span>
+</button>
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Simulating some dynamic behavior for reminders
+        const reminders = document.querySelectorAll('.group[data-reminder]');
+        reminders.forEach(reminder => {
+            reminder.addEventListener('click', () => {
+                const icon = reminder.querySelector('.material-symbols-outlined');
+                if (icon.innerText === 'radio_button_unchecked') {
+                    icon.innerText = 'check_circle';
+                    icon.classList.add('text-secondary');
+                    icon.classList.remove('text-outline');
+                    reminder.classList.add('opacity-60');
+                } else {
+                    icon.innerText = 'radio_button_unchecked';
+                    icon.classList.remove('text-secondary');
+                    icon.classList.add('text-outline');
+                    reminder.classList.remove('opacity-60');
+                }
+            });
+        });
+    </script>
+</body></html>
