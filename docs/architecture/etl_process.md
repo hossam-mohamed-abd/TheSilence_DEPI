@@ -2,18 +2,54 @@
 
 ## Status Summary
 
-| Task                    | Status         | Owner           | Deadline           | Notes |      
-| ----------------------- | -------------- | --------------- | ------------------ | ----- |
-| Problem Definition      | ✅ Done         | -               | -                  | -     |    
-| SRS                     | ✅ Done         | -               | -                  | -     |        
-| Data Collection         | ✅ Done         | -               | -                  | -     |       
-| Data Cleaning           | ✅ Done         | -               | -                  | -     |   
-| Data Modeling           | ✅ Done         | -               | -                  | -     |  
-| Data Staging            | ✅ Done         | -               | -                  | -     |  
-| Database Implementation | 🟡 In Progress | Hala Mohamed    | 22-04-2026 7:00 PM |Failure to meet the deadline| 
-| Data Warehouse          | 🟡 In Progress | Zainab abdelhak | 26-04-2026 3:00 AM |       |       
-| Pipeline                | 🟡 In Progress | abram Eisa      | [Date]             |       |   
-| Data Validation         | ⏳ Next         | [Name]          | [Date]             |       | 
+| Task                           | Status         | Owner           | Deadline           | Notes                               |
+| ------------------------------ | -------------- | --------------- | ------------------ | ----------------------------------- |
+| Problem Definition             | ✅ Done         | -               | -                  | -                                   |
+| SRS                            | ✅ Done         | -               | -                  | -                                   |
+| Stakeholders Analysis          | ✅ Done         | -               | -                  | Stakeholders Identified             |
+| System Scope Definition        | ✅ Done         | -               | -                  | Scope Finalized                     |
+| System Architecture Diagram    | ✅ Done         | -               | -                  | High Level Architecture             |
+| Main Database Design (OLTP)    | 🟡 In Progress | Team            | -                  | ERD Under Review                    |
+| Data Warehouse Design (OLAP)   | 🟡 In Progress | Zainab Abdelhak | 26-04-2026 3:00 AM | Fact & Dimension Modeling           |
+| Data Sources Documentation     | 🟡 In Progress | Team            | -                  | APIs, Datasets, Scraping Sources    |
+| Web Scraping Architecture      | 🟡 In Progress | Team            | -                  | Pharmacy Data Collection            |
+| Data Collection                | ✅ Done         | -               | -                  | Initial Dataset Collected           |
+| Data Cleaning                  | ✅ Done         | -               | -                  | Initial Dataset Prepared            |
+| Data Validation Strategy       | ⏳ Next         | -               | -                  | Validation Rules                    |
+| Data Quality Strategy          | ⏳ Next         | -               | -                  | Missing Data, Duplicates, Integrity |
+| Data Modeling                  | ✅ Done         | -               | -                  | Initial Model Completed             |
+| Data Dictionary                | ⏳ Next         | -               | -                  | Tables & Columns Documentation      |
+| Data Staging Design            | ✅ Done         | -               | -                  | Staging Layer Defined               |
+| Database Implementation        | 🟡 In Progress | Hala Mohamed    | 22-04-2026 7:00 PM | Failure to meet deadline            |
+| Warehouse Loading Strategy     | ⏳ Next         | -               | -                  | Incremental Loading Design          |
+| ETL Pipeline Design            | 🟡 In Progress | Abram Eisa      | -                  | Analytics Pipeline                  |
+| AI Pipeline Design             | ⏳ Next         | -               | -                  | Recommendation Processing           |
+| Real-Time Sync Design          | ⏳ Next         | -               | -                  | Inventory & Price Updates           |
+| Analytics Layer Design         | ⏳ Next         | -               | -                  | KPIs & Business Metrics             |
+| Security & Governance          | ⏳ Next         | -               | -                  | Roles & Access Control              |
+| Monitoring & Logging Strategy  | ⏳ Next         | -               | -                  | Pipelines Monitoring                |
+| Recommendation Engine Design   | ⏳ Next         | -               | -                  | AI Recommendation Logic             |
+| AI Feature Engineering         | ⏳ Next         | -               | -                  | TF-IDF & Similarity Features        |
+| Model Training Strategy        | ⏳ Next         | -               | -                  | Training Schedule                   |
+| Model Evaluation Strategy      | ⏳ Next         | -               | -                  | Accuracy & Validation               |
+| Backend Architecture Design    | ⏳ Next         | -               | -                  | APIs & Services                     |
+| Backend Development            | ⏳ Next         | -               | -                  | Core APIs                           |
+| Frontend Architecture Design   | ⏳ Next         | -               | -                  | Angular Structure                   |
+| UI/UX Design                   | ⏳ Next         | -               | -                  | Wireframes & Screens                |
+| Frontend Development           | ⏳ Next         | -               | -                  | User Platform                       |
+| Pharmacy Dashboard Development | ⏳ Next         | -               | -                  | Pharmacy Management                 |
+| Authentication & Authorization | ⏳ Next         | -               | -                  | JWT & Roles                         |
+| Search System Development      | ⏳ Next         | -               | -                  | Drug Search Engine                  |
+| Price Comparison Module        | ⏳ Next         | -               | -                  | Multi Pharmacy Comparison           |
+| Availability Tracking Module   | ⏳ Next         | -               | -                  | Inventory Visibility                |
+| Notifications Module           | ⏳ Next         | -               | -                  | Alerts & Updates                    |
+| Integration Testing            | ⏳ Next         | -               | -                  | Full System Testing                 |
+| Performance Testing            | ⏳ Next         | -               | -                  | Load & Stress Testing               |
+| Deployment Architecture        | ⏳ Next         | -               | -                  | Azure Infrastructure                |
+| CI/CD Setup                    | ⏳ Next         | -               | -                  | Automated Deployment                |
+| Project Documentation          | ⏳ Next         | -               | -                  | Final Documentation                 |
+| Project Roadmap                | ⏳ Next         | -               | -                  | V1, V2, Future Features             |
+| Final Presentation             | ⏳ Next         | -               | -                  | Graduation Project Defense          |
 
 ---
 
