@@ -44,7 +44,7 @@
 | 38 | Authentication & Authorization         | تصميم نظام تسجيل الدخول والصلاحيات                | ⏳ Next         |       | JWT & Roles                      |
 | 39 | Backend Development                    | تطوير الباك إند وتنفيذ الـ APIs                   | ⏳ Next         |       | Core APIs                        |
 | 40 | Frontend Architecture Design           | تصميم هيكل مشروع Angular                          | ⏳ Next         |       | Angular Structure                |
-| 41 | UI/UX Design                           | تصميم الشاشات وتجربة المستخدم                     | ⏳ Next         |       | Wireframes & Screens             |
+| 41 | UI/UX Design                           | تصميم الشاشات وتجربة المستخدم                     | ✅ Done           |       | Wireframes & Screens             |
 | 42 | Frontend Development                   | تنفيذ واجهات المستخدم                             | ⏳ Next         |       | User Platform                    |
 | 43 | Search System Development              | تطوير نظام البحث الذكي عن الأدوية                 | ⏳ Next         |       | Drug Search Engine               |
 | 44 | Recommendation System Development      | تطوير نظام التوصيات وربطه بالذكاء الاصطناعي       | ⏳ Next         |       | AI Recommendations               |
