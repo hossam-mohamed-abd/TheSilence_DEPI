@@ -10,18 +10,18 @@
 | 4  | System Scope Definition                | تحديد حدود المشروع وما سيتم تنفيذه                | ✅ Done         |       | Scope Finalized                  |
 | 5  | SRS                                    | توثيق جميع المتطلبات الوظيفية وغير الوظيفية       | ✅ Done         |       | -                                |
 | 6  | High Level Architecture                | تصميم المعمارية العامة للنظام                     | ✅ Done         |       | High Level Architecture          |
-| 7  | Data Sources Documentation             | توثيق جميع مصادر البيانات المستخدمة               | 🟡 In Progress |       | APIs, Datasets, Scraping Sources |
-| 8  | Web Scraping Research                  | دراسة المواقع المستهدفة وآلية جمع البيانات        | 🟡 In Progress |       | Pharmacy Data Sources            |
-| 9  | Web Scraping Architecture              | تصميم نظام الـ Scraping والـ Crawlers             | 🟡 In Progress |       | Pharmacy Data Collection         |
+| 7  | Data Sources Documentation             | توثيق جميع مصادر البيانات المستخدمة               | ✅ Done 🟡 In Progress |       | APIs, Datasets, Scraping Sources |
+| 8  | Web Scraping Research                  | دراسة المواقع المستهدفة وآلية جمع البيانات        | ✅ Done |       | Pharmacy Data Sources            |
+| 9  | Web Scraping Architecture              | تصميم نظام الـ Scraping والـ Crawlers             | ✅ Done |       | Pharmacy Data Collection         |
 | 10 | Data Collection                        | جمع البيانات الأولية                              | ✅ Done         |       | Initial Dataset Collected        |
 | 11 | Data Cleaning                          | تنظيف البيانات وإزالة التكرار والأخطاء            | ✅ Done         |       | Initial Dataset Prepared         |
-| 12 | Data Validation Strategy               | وضع قواعد التحقق من صحة البيانات                  | ⏳ Next         |       | Validation Rules                 |
-| 13 | Data Quality Strategy                  | معالجة Missing Values وDuplicates وIntegrity      | ⏳ Next         |       | Data Quality Rules               |
+| 12 | Data Validation Strategy               | وضع قواعد التحقق من صحة البيانات                  | ✅ Done         |       | Validation Rules                 |
+| 13 | Data Quality Strategy                  | معالجة Missing Values وDuplicates وIntegrity      | ✅ Done         |       | Data Quality Rules               |
 | 14 | Data Staging Design                    | تصميم طبقة تجهيز البيانات قبل المعالجة            | ✅ Done         |       | Staging Layer Defined            |
 | 15 | Data Modeling                          | تصميم النموذج المنطقي للبيانات                    | ✅ Done         |       | Initial Model Completed          |
-| 16 | Main Database Design (OLTP)            | تصميم قاعدة البيانات التشغيلية للموقع             | 🟡 In Progress |       | ERD Under Review                 |
-| 17 | Main Database Implementation           | تنفيذ قاعدة البيانات وإنشاء الجداول               | 🟡 In Progress |       | Database Creation                |
-| 18 | Data Dictionary                        | توثيق جميع الجداول والأعمدة والعلاقات             | ⏳ Next         |       | Tables & Columns Documentation   |
+| 16 | Main Database Design (OLTP)            | تصميم قاعدة البيانات التشغيلية للموقع             | ✅ Done |       | ERD Under Review                 |
+| 17 | Main Database Implementation           | تنفيذ قاعدة البيانات وإنشاء الجداول               | ✅ Done |       | Database Creation                |
+| 18 | Data Dictionary                        | توثيق جميع الجداول والأعمدة والعلاقات             | ✅ Done         |       | Tables & Columns Documentation   |
 | 19 | Data Warehouse Requirements            | تحديد البيانات المطلوبة داخل الـ Warehouse        | ⏳ Next         |       | Fact & Dimension Requirements    |
 | 20 | Data Warehouse Design (OLAP)           | تصميم الـ Warehouse والـ Fact Tables              | 🟡 In Progress |       | Fact & Dimension Modeling        |
 | 21 | Warehouse Loading Strategy             | تصميم آلية تحميل البيانات للـ Warehouse           | ⏳ Next         |       | Incremental Loading Design       |
@@ -39,13 +39,13 @@
 | 33 | Model Training Strategy                | تحديد طريقة وجدولة تدريب المودلز                  | ⏳ Next         |       | Training Schedule                |
 | 34 | Model Evaluation Strategy              | تقييم جودة المودلز ودقتها                         | ⏳ Next         |       | Accuracy & Validation            |
 | 35 | Model Versioning & Experiment Tracking | إدارة نسخ المودلز وتتبع التجارب                   | ⏳ Next         |       | ML Lifecycle                     |
-| 36 | Backend Architecture Design            | تصميم هيكل الباك إند والخدمات                     | ⏳ Next         |       | APIs & Services                  |
+| 36 | Backend Architecture Design            | تصميم هيكل الباك إند والخدمات                     | ✅ Done         |       | APIs & Services                  |
 | 37 | API Design                             | تصميم جميع الـ APIs الخاصة بالنظام                | ⏳ Next         |       | API Contracts                    |
 | 38 | Authentication & Authorization         | تصميم نظام تسجيل الدخول والصلاحيات                | ⏳ Next         |       | JWT & Roles                      |
 | 39 | Backend Development                    | تطوير الباك إند وتنفيذ الـ APIs                   | ⏳ Next         |       | Core APIs                        |
-| 40 | Frontend Architecture Design           | تصميم هيكل مشروع Angular                          | ⏳ Next         |       | Angular Structure                |
+| 40 | Frontend Architecture Design           | تصميم هيكل مشروع Angular                          | ✅ Done         |       | Angular Structure                |
 | 41 | UI/UX Design                           | تصميم الشاشات وتجربة المستخدم                     | ✅ Done           |       | Wireframes & Screens             |
-| 42 | Frontend Development                   | تنفيذ واجهات المستخدم                             | ⏳ Next         |       | User Platform                    |
+| 42 | Frontend Development                   | تنفيذ واجهات المستخدم                             | ✅ Done         |       | User Platform                    |
 | 43 | Search System Development              | تطوير نظام البحث الذكي عن الأدوية                 | ⏳ Next         |       | Drug Search Engine               |
 | 44 | Recommendation System Development      | تطوير نظام التوصيات وربطه بالذكاء الاصطناعي       | ⏳ Next         |       | AI Recommendations               |
 | 45 | Price Comparison Module                | تطوير مقارنة الأسعار بين الصيدليات                | ⏳ Next         |       | Multi Pharmacy Comparison        |
