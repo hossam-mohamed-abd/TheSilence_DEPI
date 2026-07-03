@@ -33,7 +33,7 @@
 
 ## SYSTANE EYE GEL DROPS
 
-![SYSTANE EYE GEL DROPS](https://gardeniapharmacies.com/wp-content/uploads/2021/09/00071837.jpg](https://gardeniapharmacies.com/wp-content/uploads/2021/09/00071837.jpg)
+![SYSTANE EYE GEL DROPS](https://gardeniapharmacies.com/wp-content/uploads/2021/09/00071837.jpg)
 
 - **Product ID:** 39541
 - **Price:** 360.00 EGP
