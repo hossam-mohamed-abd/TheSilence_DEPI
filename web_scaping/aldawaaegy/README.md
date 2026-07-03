@@ -56,5 +56,5 @@
 
 ```bash
 .
-├── aldawee_scraper.py      # Python script used for web scraping
+├── main.py      # Python script used for web scraping
 └── README.md               # Project documentation
