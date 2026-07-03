@@ -31,16 +31,16 @@
 
 ## Sample Entry (Format Example)
 
-## SYSTANE EYE GEL DROPS
+## COMBIGAN DROPS
 
-![SYSTANE EYE GEL DROPS](https://gardeniapharmacies.com/wp-content/uploads/2021/09/00071837.jpg)
+![COMBIGAN DROPS](https://gardeniapharmacies.com/wp-content/uploads/2021/09/00055026.jpg)
 
-- **Product ID:** 39541
-- **Price:** 360.00 EGP
-- **Brand:** Systane
+- **Product ID:** 35586
+- **Price:** 91.00 EGP
+- **Brand:** Combigan
 - **Category:** Drops
 - **Availability:** in stock
-- **URL:** https://gardeniapharmacies.com/en/shop/eye-drops/systane-eye-gel-drops/
+- **URL:** https://gardeniapharmacies.com/en/shop/drops/combigan-drops/
 
 ---
 
