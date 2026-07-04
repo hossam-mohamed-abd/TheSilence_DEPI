@@ -1,0 +1,180 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '15px', 'fontFamily': 'Segoe UI, Arial, sans-serif'}}}%%
+flowchart TB
+
+%% ================= USERS LAYER =================
+subgraph USERS["👥 USERS LAYER"]
+    direction LR
+    U1["🧑 Customer"]
+    U2["💊 Pharmacy Staff"]
+    U3["🛡️ Administrator"]
+end
+
+%% ================= PRESENTATION LAYER =================
+subgraph PRESENTATION["🖥️ PRESENTATION LAYER — Angular 21 (Standalone)"]
+    direction LR
+    P1["🌐 Angular Web App<br/><i>Customer Portal</i>"]
+    P2["📊 Pharmacy Dashboard"]
+    P3["⚙️ Admin Dashboard"]
+    P4["▲ Hosted on Vercel"]
+end
+
+%% ================= APPLICATION LAYER =================
+subgraph APPLICATION["🧩 APPLICATION LAYER — Node.js / Express.js REST API"]
+    direction TB
+    subgraph MODULES["Core Modules"]
+        direction LR
+        M1["🔐 Authentication"]
+        M2["👤 User Mgmt"]
+        M3["🔎 Drug Search"]
+        M4["🏥 Pharmacy Search"]
+        M5["🎯 Recommendation Svc"]
+        M6["🔔 Notification Svc"]
+        M7["📦 Inventory Mgmt"]
+        M8["🤖 AI Assistant Gateway"]
+    end
+end
+
+%% ================= MAIN DATABASE (OLTP) =================
+subgraph OLTP["🗄️ MAIN DATABASE (OLTP) — Neon PostgreSQL"]
+    direction LR
+    D1[("Users")]
+    D2[("Pharmacies")]
+    D3[("Drugs")]
+    D4[("Inventory")]
+    D5[("Favorites")]
+    D6[("Notifications")]
+end
+
+%% ================= AI LAYER =================
+subgraph AI["🧠 AI LAYER"]
+    direction LR
+    A1["💬 AI Assistant"]
+    A2["🎯 Drug Recommendation Engine"]
+    A3["🔄 Drug Alternative Engine"]
+    A4["⚠️ Health Alert Engine"]
+    A5["🧬 Personalized Recommendations"]
+end
+
+%% ================= DATA ENGINEERING LAYER =================
+subgraph DATAENG["🏗️ DATA ENGINEERING LAYER — ETL Pipeline"]
+    direction TB
+    E1["📤 Pharmacy Upload"]
+    E2["🪣 Supabase Storage<br/><i>Landing Zone</i>"]
+    E3["⚙️ ETL Pipeline"]
+    E4["🧊 Raw Data Storage<br/><i>Backblaze B2</i>"]
+    E5["🧹 Cleaning & Validation"]
+    E6["🧊 Staging Storage<br/><i>Backblaze B2</i>"]
+    E7["🔀 Transformation"]
+    E8[("📊 Data Warehouse<br/><i>Neon PostgreSQL</i>")]
+    E9["📈 Analytics"]
+    E10["📋 BI Dashboard"]
+
+    E1 -->|"raw files"| E2
+    E2 -->|"triggers"| E3
+    E3 -->|"persist raw"| E4
+    E4 -->|"validate"| E5
+    E5 -->|"clean data"| E6
+    E6 -->|"transform"| E7
+    E7 -->|"load"| E8
+    E8 -->|"query"| E9
+    E9 -->|"visualize"| E10
+end
+
+%% ================= EXTERNAL SOURCES =================
+subgraph EXTERNAL["🌍 EXTERNAL SOURCES"]
+    direction LR
+    X1["🏪 Pharmacy Websites"]
+    X2["⚕️ Medical Websites"]
+    X3["🔌 Drug APIs"]
+    X4["🏛️ Government Datasets"]
+end
+
+%% ================= INFRASTRUCTURE =================
+subgraph INFRA["☁️ INFRASTRUCTURE"]
+    direction LR
+    I1["▲ Vercel"]
+    I2["🐘 Neon PostgreSQL"]
+    I3["🧊 Backblaze B2"]
+    I4["🪣 Supabase Storage"]
+end
+
+%% ================= CONNECTIONS: USERS -> PRESENTATION =================
+U1 -->|"HTTPS"| P1
+U2 -->|"HTTPS"| P2
+U3 -->|"HTTPS"| P3
+P1 & P2 & P3 -.->|"deployed via"| P4
+
+%% ================= PRESENTATION -> APPLICATION =================
+P1 -->|"REST / JSON"| APPLICATION
+P2 -->|"REST / JSON"| APPLICATION
+P3 -->|"REST / JSON"| APPLICATION
+
+%% ================= APPLICATION -> OLTP =================
+M1 -->|"CRUD"| D1
+M2 -->|"CRUD"| D1
+M3 -->|"query"| D3
+M4 -->|"query"| D2
+M5 -->|"read/write"| D5
+M6 -->|"read/write"| D6
+M7 -->|"CRUD"| D4
+
+%% ================= APPLICATION -> AI =================
+M8 -->|"invoke"| A1
+M5 -->|"invoke"| A2
+M3 -->|"invoke"| A3
+M6 -->|"invoke"| A4
+M2 -->|"invoke"| A5
+
+%% ================= AI -> DATA SOURCES =================
+A2 -->|"reads catalog"| D3
+A5 -->|"reads history"| D5
+A1 -->|"reads insights"| E10
+
+%% ================= DATA ENGINEERING FLOWS =================
+P2 -->|"pharmacy data upload"| E1
+M7 -->|"inventory sync"| E1
+E8 -->|"feeds"| A2
+E8 -->|"feeds"| A5
+E10 -->|"insights"| P3
+
+%% ================= EXTERNAL SOURCES -> DATA ENGINEERING / AI =================
+X1 -->|"scraped/synced data"| E1
+X2 -->|"medical reference data"| A4
+X3 -->|"drug info API calls"| M3
+X4 -->|"regulatory datasets"| E1
+
+%% ================= INFRASTRUCTURE BINDINGS =================
+P4 -.->|"hosted on"| I1
+OLTP -.->|"runs on"| I2
+E4 -.->|"stored on"| I3
+E6 -.->|"stored on"| I3
+E2 -.->|"stored on"| I4
+E8 -.->|"runs on"| I2
+
+%% ================= STYLES =================
+classDef usersStyle fill:#E3F2FD,stroke:#1565C0,stroke-width:1.5px,color:#0D47A1
+classDef presStyle fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.5px,color:#1B5E20
+classDef appStyle fill:#FFF3E0,stroke:#EF6C00,stroke-width:1.5px,color:#E65100
+classDef dbStyle fill:#FCE4EC,stroke:#AD1457,stroke-width:1.5px,color:#880E4F
+classDef aiStyle fill:#EDE7F6,stroke:#5E35B1,stroke-width:1.5px,color:#311B92
+classDef dataengStyle fill:#E0F7FA,stroke:#00838F,stroke-width:1.5px,color:#004D40
+classDef extStyle fill:#FBE9E7,stroke:#D84315,stroke-width:1.5px,color:#BF360C
+classDef infraStyle fill:#ECEFF1,stroke:#455A64,stroke-width:1.5px,color:#263238
+
+class U1,U2,U3 usersStyle
+class P1,P2,P3,P4 presStyle
+class M1,M2,M3,M4,M5,M6,M7,M8 appStyle
+class D1,D2,D3,D4,D5,D6 dbStyle
+class A1,A2,A3,A4,A5 aiStyle
+class E1,E2,E3,E4,E5,E6,E7,E8,E9,E10 dataengStyle
+class X1,X2,X3,X4 extStyle
+class I1,I2,I3,I4 infraStyle
+
+style USERS fill:#F5FAFF,stroke:#1565C0,stroke-width:2px
+style PRESENTATION fill:#F3FBF4,stroke:#2E7D32,stroke-width:2px
+style APPLICATION fill:#FFFAF3,stroke:#EF6C00,stroke-width:2px
+style OLTP fill:#FFF5F8,stroke:#AD1457,stroke-width:2px
+style AI fill:#F7F5FC,stroke:#5E35B1,stroke-width:2px
+style DATAENG fill:#F1FCFD,stroke:#00838F,stroke-width:2px
+style EXTERNAL fill:#FFF6F4,stroke:#D84315,stroke-width:2px
+style INFRA fill:#F7F8F9,stroke:#455A64,stroke-width:2px
