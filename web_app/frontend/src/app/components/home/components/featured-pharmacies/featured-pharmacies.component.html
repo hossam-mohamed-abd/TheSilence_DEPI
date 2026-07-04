@@ -1,0 +1,101 @@
+<section class="section pharmacies">
+  <div class="container">
+
+    <div class="section-header">
+      <span class="section-label">Trusted Pharmacies</span>
+      <h2 class="section-title">Explore Popular Pharmacies</h2>
+      <p class="section-desc">
+        Find pharmacies, compare availability and discover nearby medicine providers.
+      </p>
+    </div>
+
+    <div class="pharmacies-grid">
+
+      @if (loading && pharmacies.length === 0) {
+      @for (i of [1,2,3,4]; track i) {
+      <div class="pharmacy-card pharmacy-card--skeleton">
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line skeleton-line--title"></div>
+          <div class="skeleton-line skeleton-line--sub"></div>
+          <div class="skeleton-stats">
+            <div class="skeleton-line skeleton-line--stat"></div>
+            <div class="skeleton-line skeleton-line--stat"></div>
+            <div class="skeleton-line skeleton-line--stat"></div>
+          </div>
+          <div class="skeleton-line skeleton-line--btn"></div>
+        </div>
+      </div>
+      }
+      }
+
+      @for (pharmacy of pharmacies; track pharmacy.id) {
+      <div class="pharmacy-card" (click)="onCardClick(pharmacy)">
+
+        <div class="pharmacy-cover">
+          @if (pharmacy.logo_url) {
+          <img [src]="pharmacy.logo_url" [alt]="pharmacy.name" />
+          } @else {
+          <div class="pharmacy-cover-fallback">
+            <span>{{ pharmacy.name?.charAt(0) }}</span>
+          </div>
+          }
+          <div class="pharmacy-cover-overlay"></div>
+
+          <div class="pharmacy-cover-info">
+            <div class="pharmacy-rating">
+              <i class="fa-solid fa-star"></i>
+              <span>{{ pharmacy.avg_rating }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pharmacy-body">
+
+          <div class="pharmacy-header">
+            <h3>{{ pharmacy.name }}</h3>
+            <span class="pharmacy-city">
+              <i class="fa-solid fa-location-dot"></i>
+              {{ pharmacy.city_name }}
+            </span>
+          </div>
+
+          <div class="pharmacy-stats">
+            <div class="pstat">
+              <i class="fa-solid fa-pills"></i>
+              <span>{{ pharmacy.medicines_count }} Medicines</span>
+            </div>
+            <div class="pstat">
+              <i class="fa-solid fa-users"></i>
+              <span>{{ pharmacy.reviews_count }} Reviews</span>
+            </div>
+          </div>
+
+          <button class="card-btn" [routerLink]="[
+                  '/pharmacies',
+                  pharmacy.id
+                ]">
+            Explore Pharmacy
+          </button>
+
+        </div>
+      </div>
+      }
+
+    </div>
+
+    @if (hasMore) {
+    <div class="section-actions">
+      <button class="load-more-btn" (click)="loadPharmacies()" [disabled]="loading">
+        @if (loading) {
+        <span class="load-spinner"></span>
+        Loading...
+        } @else {
+        Load More
+        }
+      </button>
+    </div>
+    }
+
+  </div>
+</section>

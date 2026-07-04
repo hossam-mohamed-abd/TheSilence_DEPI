@@ -1,0 +1,285 @@
+<div class="register-page">
+
+  <!-- ── Toast ──────────────────────────────────────────── -->
+  @if(toast) {
+    <div class="toast-overlay">
+      <div class="toast"
+           [class.toast-error]="toast.type === 'error'"
+           [class.toast-success]="toast.type === 'success'">
+        <div class="toast-icon">
+          @if(toast.type === 'error') {
+            <i class="fa-solid fa-circle-exclamation"></i>
+          } @else {
+            <i class="fa-solid fa-circle-check"></i>
+          }
+        </div>
+        <div class="toast-body">
+          <span class="toast-message">{{ toast.message }}</span>
+          <span class="toast-timer">سيتم الإغلاق خلال لحظات...</span>
+        </div>
+        <button class="toast-close" (click)="dismissToast()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="toast-progress"
+             [class.toast-progress-error]="toast.type === 'error'"
+             [class.toast-progress-success]="toast.type === 'success'">
+          <div class="toast-progress-bar" [style.width.%]="toastProgress"></div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Left Panel ────────────────────────────────────── -->
+  <div class="left-panel">
+    <div class="panel-bg"></div>
+    <div class="panel-orb panel-orb-1"></div>
+    <div class="panel-orb panel-orb-2"></div>
+
+    <div class="panel-content">
+      <div class="brand">
+        <div style="height: 200px">
+          <img src="/images/logo.png" alt="logo">
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        <h1>
+          The smarter way<br>
+          to find your<br>
+          <span class="headline-gradient">medicine.</span>
+        </h1>
+        <p>
+          Join thousands of Egyptians who search, compare
+          and discover medicines with AI-powered insights.
+        </p>
+      </div>
+
+      <div class="panel-features">
+        <div class="pf-item">
+          <div class="pf-icon"><i class="fa-solid fa-pills"></i></div>
+          <div>
+            <strong>Find Any Medicine</strong>
+            <span>Search by name or active ingredient</span>
+          </div>
+        </div>
+        <div class="pf-item">
+          <div class="pf-icon"><i class="fa-solid fa-robot"></i></div>
+          <div>
+            <strong>AI Recommendations</strong>
+            <span>Smart alternatives and safety checks</span>
+          </div>
+        </div>
+        <div class="pf-item">
+          <div class="pf-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <div>
+            <strong>Nearby Pharmacies</strong>
+            <span>Real-time stock near you</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right Form ────────────────────────────────────── -->
+  <div class="right-panel">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+
+    <div class="form-scroll">
+      <div class="glass-card register-card">
+        <div class="card-accent"></div>
+
+        <div class="card-header">
+          <h2>Create an account</h2>
+          <p>Enter your details to get started</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="register()">
+
+          <!-- Personal -->
+          <div class="form-section-label">
+            <i class="fa-solid fa-user"></i>
+            Personal Information
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="firstName">First Name</label>
+              <div class="input-wrap" [class.invalid]="showError('firstName')">
+                <input id="firstName" type="text" placeholder="Ahmed"
+                       formControlName="firstName" autocomplete="given-name" />
+              </div>
+              @if(showError('firstName')) {
+                <span class="field-error">
+                  <i class="fa-solid fa-triangle-exclamation"></i> مطلوب
+                </span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="lastName">Last Name</label>
+              <div class="input-wrap" [class.invalid]="showError('lastName')">
+                <input id="lastName" type="text" placeholder="Mohamed"
+                       formControlName="lastName" autocomplete="family-name" />
+              </div>
+              @if(showError('lastName')) {
+                <span class="field-error">
+                  <i class="fa-solid fa-triangle-exclamation"></i> مطلوب
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email Address</label>
+            <div class="input-wrap" [class.invalid]="showError('email')">
+              <i class="fa-regular fa-envelope field-icon"></i>
+              <input id="email" type="email" placeholder="example@email.com"
+                     formControlName="email" autocomplete="email" />
+            </div>
+            @if(showError('email')) {
+              <span class="field-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> أدخل بريداً إلكترونياً صحيحاً
+              </span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <div class="input-wrap" [class.invalid]="showError('phone')">
+              <i class="fa-solid fa-phone field-icon"></i>
+              <input id="phone" type="tel" placeholder="01xxxxxxxxx"
+                     formControlName="phone" autocomplete="tel" />
+            </div>
+            @if(showError('phone')) {
+              <span class="field-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> مطلوب
+              </span>
+            }
+          </div>
+
+          <!-- Security -->
+          <div class="form-section-label">
+            <i class="fa-solid fa-shield-halved"></i>
+            Security
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="input-wrap" [class.invalid]="showError('password')">
+              <i class="fa-solid fa-lock field-icon"></i>
+              <input id="password" [type]="showPass ? 'text' : 'password'"
+                     placeholder="At least 8 characters"
+                     formControlName="password" autocomplete="new-password" />
+              <button type="button" class="toggle-pass"
+                      (click)="showPass = !showPass" tabindex="-1">
+                <i class="fa-regular"
+                   [class.fa-eye]="!showPass"
+                   [class.fa-eye-slash]="showPass"></i>
+              </button>
+            </div>
+            @if(showError('password')) {
+              <span class="field-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> ٨ أحرف على الأقل
+              </span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="input-wrap"
+                 [class.invalid]="showError('confirmPassword') || showMismatch()">
+              <i class="fa-solid fa-lock field-icon"></i>
+              <input id="confirmPassword" type="password"
+                     placeholder="Re-enter your password"
+                     formControlName="confirmPassword" autocomplete="new-password" />
+            </div>
+            @if(showMismatch()) {
+              <span class="field-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> كلمتا المرور غير متطابقتين
+              </span>
+            } @else if(showError('confirmPassword')) {
+              <span class="field-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> مطلوب
+              </span>
+            }
+          </div>
+
+          <!-- Location -->
+          <div class="form-section-label">
+            <i class="fa-solid fa-location-dot"></i>
+            Location
+          </div>
+
+          <div class="field">
+            <label for="countryId">Country</label>
+            <div class="select-wrap" [class.invalid]="showError('countryId')">
+              <i class="fa-solid fa-globe field-icon"></i>
+              <select id="countryId" formControlName="countryId" (change)="onCountryChange()">
+                <option value="">Select country</option>
+                @for(country of countries; track country.id) {
+                  <option [value]="country.id">{{ country.name }}</option>
+                }
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="governorateId">Governorate</label>
+              <div class="select-wrap"
+                   [class.disabled]="registerForm.get('governorateId')?.disabled">
+                <i class="fa-solid fa-map field-icon"></i>
+                <select id="governorateId" formControlName="governorateId"
+                        (change)="onGovernorateChange()">
+                  <option value="">Select governorate</option>
+                  @for(gov of governorates; track gov.id) {
+                    <option [value]="gov.id">{{ gov.name }}</option>
+                  }
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="cityId">City</label>
+              <div class="select-wrap"
+                   [class.disabled]="registerForm.get('cityId')?.disabled">
+                <i class="fa-solid fa-city field-icon"></i>
+                <select id="cityId" formControlName="cityId">
+                  <option value="">Select city</option>
+                  @for(city of cities; track city.id) {
+                    <option [value]="city.id">{{ city.name }}</option>
+                  }
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button class="submit-btn" type="submit" [disabled]="isLoading">
+            <span class="btn-content" [class.hidden]="isLoading">
+              Create Account
+              <i class="fa-solid fa-arrow-right"></i>
+            </span>
+            <span class="btn-loader" [class.visible]="isLoading">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              Creating account...
+            </span>
+            <div class="btn-shine"></div>
+          </button>
+
+        </form>
+
+        <p class="switch-link">
+          Already have an account?
+          <a routerLink="/login">Sign in</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+</div>
