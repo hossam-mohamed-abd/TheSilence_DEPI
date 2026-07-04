@@ -1,120 +1,59 @@
-# Live Application
+# TheSilenceDEPIProjectWebFront
 
-Production URL:
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.1.
 
-https://medi-search-eight.vercel.app/
+## Development server
 
-Hosting Platform:
-
-Vercel
-
-The frontend application is deployed on Vercel, providing:
-
-- Automatic deployments
-- Global CDN
-- High availability
-- Continuous integration support
-- Fast production builds
-
----
-
-# Source Code Repository
-
-GitHub Repository:
-
-https://github.com/hossam-mohamed-abd/MediSearch
-
-The repository contains:
-
-- Angular Frontend Application
-- Reusable Components
-- Responsive UI Implementation
-- Routing Configuration
-- Services Layer
-- Environment Configuration
-- Assets and Static Resources
-- Documentation
-
-The repository follows a modular and scalable Angular architecture to simplify maintenance and future development.
-
----
-
-# Quick Links
-
-| Resource | URL |
-|----------|-----|
-| Live Demo | https://medi-search-eight.vercel.app/ |
-| Source Code | https://github.com/hossam-mohamed-abd/MediSearch |
-| UI/UX Design Board | https://www.figma.com/board/qygMtKJHuPAP0KwOt1JauR/MediSearch |
-
----
-
-# Clone Repository
+To start a local development server, run:
 
 ```bash
-git clone https://github.com/hossam-mohamed-abd/MediSearch.git
-cd MediSearch
-npm install
 ng serve
 ```
 
----
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-# Build Production Version
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
 ```bash
-ng build --configuration production
+ng generate component component-name
 ```
 
----
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-# Project Structure
-
-```text
-src
-│
-├── app
-│   ├── core
-│   ├── shared
-│   ├── features
-│   ├── layouts
-│   ├── pages
-│   └── services
-│
-├── assets
-├── environments
-└── styles
+```bash
+ng generate --help
 ```
 
----
+## Building
 
-# Frontend Technology Stack
+To build the project run:
 
-- Angular
-- TypeScript
-- RxJS
-- Angular Router
-- Reactive Forms
-- REST APIs
-- Responsive Design
-- CSS3
-- Vercel Deployment
-
----
-
-# Current Status
-
-```text
-Frontend Status:
-MVP Development
+```bash
+ng build
 ```
 
-```text
-Deployment:
-Production Demo Available
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
 ```
 
-```text
-Repository:
-Public GitHub Repository
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
 ```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
