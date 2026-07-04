@@ -1,0 +1,62 @@
+%% Title: MediSearch Warehouse Fact, Dimension, Analytics, and KPI Relationships
+flowchart LR
+    subgraph Dimensions["Dimensions<br/>Business Context"]
+        dimDate["Date"]
+        dimUser["User"]
+        dimDrug["Drug"]
+        dimPharmacy["Pharmacy"]
+        dimLocation["Location"]
+        dimChannel["Channel"]
+    end
+
+    subgraph Facts["Fact Tables<br/>Measurable Events"]
+        factSearch["Search Activity"]
+        factInventory["Inventory Snapshot"]
+        factEngagement["User Engagement"]
+        factAvailability["Drug Availability"]
+        factKpi["Daily KPI Summary"]
+    end
+
+    subgraph Analytics["Analytics Layer"]
+        demand["Demand & Search Trends"]
+        stock["Stockout & Availability Analysis"]
+        engagement["User Engagement Analysis"]
+        geo["Geographic Coverage Analysis"]
+        aiFeatures["AI Feature Store Inputs"]
+    end
+
+    subgraph KPIs["Executive KPIs"]
+        activeUsers["Active Users"]
+        searchSuccess["Search Success Rate"]
+        stockoutRate["Stockout Rate"]
+        availabilityIndex["Drug Availability Index"]
+        notificationReadRate["Notification Read Rate"]
+    end
+
+    Dimensions --> Facts
+    factSearch --> demand
+    factSearch --> searchSuccess
+    factInventory --> stock
+    factInventory --> stockoutRate
+    factEngagement --> engagement
+    factEngagement --> notificationReadRate
+    factAvailability --> geo
+    factAvailability --> availabilityIndex
+    factKpi --> activeUsers
+    factKpi --> searchSuccess
+    factKpi --> stockoutRate
+
+    demand --> aiFeatures
+    stock --> aiFeatures
+    engagement --> aiFeatures
+    geo --> aiFeatures
+
+    classDef dimension fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0f172a;
+    classDef fact fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#0f172a;
+    classDef analytics fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#0f172a;
+    classDef kpi fill:#fce7f3,stroke:#be185d,stroke-width:2px,color:#0f172a;
+
+    class dimDate,dimUser,dimDrug,dimPharmacy,dimLocation,dimChannel dimension;
+    class factSearch,factInventory,factEngagement,factAvailability,factKpi fact;
+    class demand,stock,engagement,geo,aiFeatures analytics;
+    class activeUsers,searchSuccess,stockoutRate,availabilityIndex,notificationReadRate kpi;

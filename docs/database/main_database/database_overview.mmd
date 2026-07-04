@@ -1,0 +1,29 @@
+%% Title: MediSearch Main Operational Database Overview
+flowchart TD
+    users["Users<br/>Patients, Pharmacy Staff, Administrators"] --> angular["Angular Web Application<br/>Search, Favorites, Inventory UI"]
+    angular --> backend["Backend API Services<br/>Authentication, Business Rules, Validation"]
+    backend --> mainDb[("Main Operational Database<br/>Neon PostgreSQL OLTP")]
+
+    mainDb --> userData["User Profiles & Access Control"]
+    mainDb --> pharmacyData["Pharmacy & Staff Operations"]
+    mainDb --> drugData["Drug Catalog, Categories & Tags"]
+    mainDb --> inventoryData["Real-Time Pharmacy Inventory"]
+    mainDb --> engagementData["Favorites, Notifications & Search Logs"]
+
+    userData --> backend
+    pharmacyData --> backend
+    drugData --> backend
+    inventoryData --> backend
+    engagementData --> backend
+
+    classDef actor fill:#e0f2fe,stroke:#0369a1,stroke-width:2px,color:#0f172a;
+    classDef app fill:#ede9fe,stroke:#6d28d9,stroke-width:2px,color:#0f172a;
+    classDef service fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#0f172a;
+    classDef database fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#0f172a;
+    classDef domain fill:#f8fafc,stroke:#475569,stroke-width:1.5px,color:#0f172a;
+
+    class users actor;
+    class angular app;
+    class backend service;
+    class mainDb database;
+    class userData,pharmacyData,drugData,inventoryData,engagementData domain;

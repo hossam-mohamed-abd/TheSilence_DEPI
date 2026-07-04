@@ -1,0 +1,45 @@
+%% Title: MediSearch Data Warehouse Professional Star Schema
+flowchart TB
+    subgraph Dimensions["Conformed Dimension Tables"]
+        dimDate["Dim Date<br/>date_key, day, month, quarter, year"]
+        dimUser["Dim User<br/>user_key, profile segment, location"]
+        dimDrug["Dim Drug<br/>drug_key, category, tags, prescription flag"]
+        dimPharmacy["Dim Pharmacy<br/>pharmacy_key, city, status, license type"]
+        dimLocation["Dim Location<br/>location_key, city, governorate, region"]
+        dimChannel["Dim Channel<br/>channel_key, web, mobile, API"]
+    end
+
+    subgraph Facts["Business Process Fact Tables"]
+        factSearch["Fact Search Activity<br/>search_count, zero_result_count, response_time"]
+        factInventory["Fact Inventory Snapshot<br/>quantity_on_hand, stockout_flag, inventory_value"]
+        factFavorite["Fact User Engagement<br/>favorite_count, notification_count, read_rate"]
+        factAvailability["Fact Drug Availability<br/>available_pharmacy_count, min_price, avg_price"]
+        factKpi["Fact KPI Daily Summary<br/>active_users, searches, stockouts, conversion_rate"]
+    end
+
+    dimDate --> factSearch
+    dimDate --> factInventory
+    dimDate --> factFavorite
+    dimDate --> factAvailability
+    dimDate --> factKpi
+
+    dimUser --> factSearch
+    dimUser --> factFavorite
+    dimDrug --> factSearch
+    dimDrug --> factInventory
+    dimDrug --> factAvailability
+    dimPharmacy --> factInventory
+    dimPharmacy --> factAvailability
+    dimLocation --> factSearch
+    dimLocation --> factInventory
+    dimLocation --> factAvailability
+    dimChannel --> factSearch
+    dimChannel --> factFavorite
+
+    classDef dimension fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#0f172a;
+    classDef fact fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#0f172a;
+    classDef group fill:#f8fafc,stroke:#64748b,stroke-width:1.5px,color:#0f172a;
+
+    class dimDate,dimUser,dimDrug,dimPharmacy,dimLocation,dimChannel dimension;
+    class factSearch,factInventory,factFavorite,factAvailability,factKpi fact;
+    class Dimensions,Facts group;
