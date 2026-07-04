@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model alerts {
+  id          BigInt      @id @default(autoincrement())
+  drug_id     BigInt?
+  pharmacy_id BigInt?
+  alert_type  String?     @db.VarChar(255)
+  created_at  DateTime?   @db.Timestamp(6)
+  drugs       drugs?      @relation(fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_alerts_drug")
+  pharmacies  pharmacies? @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_alerts_pharmacy")
+}
+
+model cities {
+  id             BigInt        @id @default(autoincrement())
+  governorate_id BigInt?
+  name           String?       @db.VarChar(255)
+  governorates   governorates? @relation(fields: [governorate_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_cities_governorate")
+  pharmacies     pharmacies[]
+  search_logs    search_logs[]
+  users          users[]
+}
+
+model countries {
+  id           BigInt         @id @default(autoincrement())
+  name         String?        @db.VarChar(255)
+  governorates governorates[]
+}
+
+model drug_alternatives {
+  id                                                 BigInt  @id @default(autoincrement())
+  drug_id                                            BigInt?
+  alternative_drug_id                                BigInt?
+  drugs_drug_alternatives_alternative_drug_idTodrugs drugs?  @relation("drug_alternatives_alternative_drug_idTodrugs", fields: [alternative_drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_drug_alternatives_alt")
+  drugs_drug_alternatives_drug_idTodrugs             drugs?  @relation("drug_alternatives_drug_idTodrugs", fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_drug_alternatives_drug")
+
+  @@unique([drug_id, alternative_drug_id], map: "uq_alternative")
+}
+
+model drug_categories {
+  id          BigInt    @id @default(autoincrement())
+  name        String?   @db.VarChar(255)
+  description String?
+  created_at  DateTime? @db.Timestamp(6)
+  image_url   String?
+  drugs       drugs[]
+}
+
+model drug_tags {
+  id       BigInt  @id @default(autoincrement())
+  drug_id  BigInt?
+  tag_name String? @db.VarChar(255)
+  drugs    drugs?  @relation(fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_drug_tags_drug")
+}
+
+model drugs {
+  id                                                             BigInt                 @id @default(autoincrement())
+  category_id                                                    BigInt?
+  name                                                           String?
+  active_substance                                               String?                @db.VarChar(255)
+  dosage_form                                                    String?                @db.VarChar(255)
+  strength                                                       String?                @db.VarChar(255)
+  manufacturer                                                   String?                @db.VarChar(255)
+  description                                                    String?
+  image_url                                                      String?
+  created_at                                                     DateTime?              @db.Timestamp(6)
+  updated_at                                                     DateTime?              @db.Timestamp(6)
+  alerts                                                         alerts[]
+  availability_history                                           availability_history[]
+  drug_alternatives_drug_alternatives_alternative_drug_idTodrugs drug_alternatives[]    @relation("drug_alternatives_alternative_drug_idTodrugs")
+  drug_alternatives_drug_alternatives_drug_idTodrugs             drug_alternatives[]    @relation("drug_alternatives_drug_idTodrugs")
+  drug_analytics                                                 drug_analytics?
+  drug_tags                                                      drug_tags[]
+  drug_categories                                                drug_categories?       @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_drugs_category")
+  favorites                                                      favorites[]
+  pharmacy_inventory                                             pharmacy_inventory[]
+  price_history                                                  price_history[]
+
+  @@index([active_substance], map: "idx_active_substance")
+  @@index([name], map: "idx_drug_name")
+  @@index([category_id], map: "idx_drugs_category")
+  @@index([name], map: "idx_drugs_name")
+}
+
+model favorites {
+  id         BigInt    @id @default(autoincrement())
+  user_id    BigInt?
+  drug_id    BigInt?
+  created_at DateTime? @db.Timestamp(6)
+  drugs      drugs?    @relation(fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_favorites_drug")
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_favorites_user")
+
+  @@unique([user_id, drug_id], map: "uq_user_drug")
+}
+
+model governorates {
+  id         BigInt     @id @default(autoincrement())
+  country_id BigInt?
+  name       String?    @db.VarChar(255)
+  cities     cities[]
+  countries  countries? @relation(fields: [country_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_governorates_country")
+}
+
+model notifications {
+  id                BigInt    @id @default(autoincrement())
+  user_id           BigInt?
+  notification_type String?   @db.VarChar(255)
+  title             String?   @db.VarChar(255)
+  message           String?
+  is_read           Boolean?  @default(false)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  users             users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_notifications_user")
+}
+
+model pharmacies {
+  id                 BigInt               @id @default(autoincrement())
+  name               String?              @db.VarChar(255)
+  phone              String?              @db.VarChar(255)
+  email              String?              @db.VarChar(255)
+  city_id            BigInt?
+  address            String?
+  is_active          Boolean?
+  created_at         DateTime?            @db.Timestamp(6)
+  logo_url           String?
+  alerts             alerts[]
+  cities             cities?              @relation(fields: [city_id], references: [id], onUpdate: NoAction, map: "fk_pharmacies_city")
+  pharmacy_inventory pharmacy_inventory[]
+  pharmacy_ratings   pharmacy_ratings[]
+  pharmacy_staff     pharmacy_staff[]
+}
+
+model pharmacy_inventory {
+  id            BigInt      @id @default(autoincrement())
+  pharmacy_id   BigInt?
+  drug_id       BigInt?
+  quantity      Int?
+  minimum_stock Int?
+  price         Decimal?    @db.Decimal(10, 2)
+  last_updated  DateTime?   @db.Timestamp(6)
+  drugs         drugs?      @relation(fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inventory_drug")
+  pharmacies    pharmacies? @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inventory_pharmacy")
+
+  @@unique([pharmacy_id, drug_id], map: "uq_inventory")
+  @@index([drug_id], map: "idx_inventory_drug")
+  @@index([pharmacy_id], map: "idx_inventory_pharmacy")
+  @@index([drug_id], map: "idx_pharmacy_inventory_drug")
+  @@index([pharmacy_id], map: "idx_pharmacy_inventory_pharmacy")
+}
+
+model pharmacy_ratings {
+  id          BigInt      @id @default(autoincrement())
+  user_id     BigInt?
+  pharmacy_id BigInt?
+  rating      Int?
+  review      String?
+  created_at  DateTime?   @db.Timestamp(6)
+  pharmacies  pharmacies? @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ratings_pharmacy")
+  users       users?      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ratings_user")
+
+  @@unique([user_id, pharmacy_id], map: "uq_user_pharmacy_rating")
+}
+
+model pharmacy_staff {
+  id          BigInt      @id @default(autoincrement())
+  user_id     BigInt?
+  pharmacy_id BigInt?
+  role        String?     @db.VarChar(255)
+  created_at  DateTime?   @db.Timestamp(6)
+  pharmacies  pharmacies? @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_pharmacy_staff_pharmacy")
+  users       users?      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_pharmacy_staff_user")
+}
+
+model search_logs {
+  id          BigInt    @id @default(autoincrement())
+  user_id     BigInt?
+  search_text String?   @db.VarChar(255)
+  searched_at DateTime? @db.Timestamp(6)
+  ip_address  String?   @db.VarChar(255)
+  city_id     BigInt?
+  cities      cities?   @relation(fields: [city_id], references: [id], onUpdate: NoAction, map: "fk_search_logs_city")
+  users       users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_search_logs_user")
+
+  @@index([search_text], map: "idx_search_text")
+}
+
+model users {
+  id               BigInt             @id @default(autoincrement())
+  first_name       String?            @db.VarChar(255)
+  last_name        String?            @db.VarChar(255)
+  email            String?            @unique @db.VarChar(255)
+  password_hash    String?            @db.VarChar(255)
+  phone            String?            @db.VarChar(255)
+  role             String?            @db.VarChar(255)
+  city_id          BigInt?
+  is_active        Boolean?
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  profile_image    String?
+  email_verified   Boolean?           @default(false)
+  last_login       DateTime?          @db.Timestamp(6)
+  favorites        favorites[]
+  notifications    notifications[]
+  pharmacy_ratings pharmacy_ratings[]
+  pharmacy_staff   pharmacy_staff[]
+  search_logs      search_logs[]
+  cities           cities?            @relation(fields: [city_id], references: [id], onUpdate: NoAction, map: "fk_users_city")
+}
+
+model availability_history {
+  id          BigInt   @id
+  drug_id     BigInt
+  pharmacy_id BigInt
+  available   Boolean
+  checked_at  DateTime @default(now()) @db.Timestamp(6)
+  drugs       drugs    @relation(fields: [drug_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([drug_id], map: "idx_availability_history_drug")
+  @@index([pharmacy_id], map: "idx_availability_history_pharmacy")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model drug_analytics {
+  id                      BigInt   @id
+  drug_id                 BigInt   @unique
+  avg_price               Decimal? @db.Decimal(10, 2)
+  min_price               Decimal? @db.Decimal(10, 2)
+  max_price               Decimal? @db.Decimal(10, 2)
+  availability_percentage Decimal? @db.Decimal(5, 2)
+  calculated_at           DateTime @default(now()) @db.Timestamp(6)
+  drugs                   drugs    @relation(fields: [drug_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([drug_id], map: "idx_drug_analytics_drug")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model price_history {
+  id          BigInt   @id
+  drug_id     BigInt
+  pharmacy_id BigInt
+  price       Decimal  @db.Decimal(10, 2)
+  recorded_at DateTime @default(now()) @db.Timestamp(6)
+  drugs       drugs    @relation(fields: [drug_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([drug_id], map: "idx_price_history_drug")
+  @@index([pharmacy_id], map: "idx_price_history_pharmacy")
+}

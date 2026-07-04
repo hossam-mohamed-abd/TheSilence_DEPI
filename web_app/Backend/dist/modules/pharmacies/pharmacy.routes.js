@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const pharmacy_controller_1 = require("./pharmacy.controller");
+const auth_middleware_1 = require("../../middleware/auth.middleware");
+const router = (0, express_1.Router)();
+const controller = new pharmacy_controller_1.PharmacyController();
+router.get("/", controller.getFeaturedPharmacies);
+router.get("/:id", controller.getPharmacy);
+router.get("/:id/medicines", controller.getPharmacyMedicines);
+router.get("/:id/categories", controller.getPharmacyCategories);
+router.get("/:id/reviews", controller.getPharmacyReviews);
+router.post("/:id/reviews", auth_middleware_1.authMiddleware, controller.addReview);
+router.get("/:id/statistics", controller.getPharmacyStatistics);
+exports.default = router;
