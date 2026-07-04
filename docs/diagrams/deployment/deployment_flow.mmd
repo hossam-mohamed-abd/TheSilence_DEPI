@@ -1,0 +1,12 @@
+%% Title: MediSearch Deployment Flow
+flowchart LR
+  Code[Code Changes] --> Commit[Git Commit]
+  Commit --> Push[Push to GitHub]
+  Push --> CI[GitHub / Vercel Build Trigger]
+  CI --> Install[Install Dependencies]
+  Install --> Build[Build Angular or Package Node API]
+  Build --> Env[Inject Environment Variables and Secrets]
+  Env --> Deploy[Deploy to Vercel]
+  Deploy --> Smoke[Run Health and Connectivity Checks]
+  Smoke --> Live[Production Frontend and Backend URLs]
+  Live --> Monitor[Monitor Logs and Metrics]

@@ -1,0 +1,27 @@
+%% Title: MediSearch Frontend Application Navigation
+flowchart TB
+  Landing[Landing Page] --> Auth{Authenticated?}
+  Auth -->|No| Login[Login]
+  Auth -->|No| Register[Register]
+  Auth -->|Yes - Patient| PatientDash[Patient Dashboard]
+  Auth -->|Yes - Pharmacy| PharmacyDash[Pharmacy Dashboard]
+  Auth -->|Yes - Admin| AdminDash[Admin Dashboard]
+
+  PatientDash --> Search[Drug Search]
+  Search --> Details[Drug Details]
+  Details --> Alternatives[Alternatives]
+  Details --> Compare[Price Comparison]
+  PatientDash --> Favorites[Favorites]
+  PatientDash --> Notifications[Notifications]
+  PatientDash --> Profile[Profile]
+
+  PharmacyDash --> Inventory[Inventory Management]
+  PharmacyDash --> Upload[Upload Inventory Files]
+  PharmacyDash --> PharmacyAnalytics[Pharmacy Analytics]
+  PharmacyDash --> StockAlerts[Stock Alerts]
+
+  AdminDash --> Users[User Management]
+  AdminDash --> Pharmacies[Pharmacy Management]
+  AdminDash --> Drugs[Drug Management]
+  AdminDash --> Analytics[System Analytics]
+  AdminDash --> Monitoring[Monitoring]

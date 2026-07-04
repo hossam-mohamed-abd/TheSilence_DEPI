@@ -1,0 +1,19 @@
+%% Title: MediSearch AI Assistant and Health Alert Flow
+flowchart TB
+  User[Patient Query or Drug Detail View] --> Backend[Backend API]
+  Backend --> Safety[Medical Safety Guardrails]
+  Safety --> Intent{Intent Type}
+  Intent -->|Find alternatives| Alternatives[Drug Alternative Workflow]
+  Intent -->|Need recommendation| Recommend[Recommendation Workflow]
+  Intent -->|Risk or stock event| Alert[Health and Stock Alert Workflow]
+
+  Alternatives --> Compare[Compare active ingredients, category, availability, price]
+  Recommend --> Personalize[Use search history, favorites, inventory context]
+  Alert --> Detect[Detect low stock, price changes, repeated demand]
+
+  Compare --> Review[Rank and explain results]
+  Personalize --> Review
+  Detect --> Notify[Generate notification]
+  Review --> Response[Return ranked suggestions]
+  Notify --> Response
+  Response --> User

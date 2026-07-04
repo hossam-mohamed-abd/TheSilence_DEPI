@@ -1,0 +1,84 @@
+%% Title: MediSearch Main Operational Database ERD
+erDiagram
+  USERS ||--o{ FAVORITES : saves
+  USERS ||--o{ SEARCH_HISTORY : performs
+  USERS ||--o{ NOTIFICATIONS : receives
+  USERS ||--o{ ORDERS : places
+  PHARMACIES ||--o{ INVENTORY : manages
+  PHARMACIES ||--o{ ORDERS : fulfills
+  DRUG_CATEGORIES ||--o{ DRUGS : classifies
+  DRUGS ||--o{ INVENTORY : stocked_as
+  DRUGS ||--o{ FAVORITES : favorited_as
+  DRUGS ||--o{ SEARCH_HISTORY : searched_for
+  DRUGS ||--o{ ORDER_ITEMS : ordered_as
+  ORDERS ||--o{ ORDER_ITEMS : contains
+
+  USERS {
+    int user_id PK
+    string full_name
+    string email
+    string role
+    string password_hash
+    datetime created_at
+  }
+  PHARMACIES {
+    int pharmacy_id PK
+    string name
+    string branch
+    string city
+    string contact_phone
+  }
+  DRUG_CATEGORIES {
+    int category_id PK
+    string category_name
+  }
+  DRUGS {
+    int drug_id PK
+    int category_id FK
+    string drug_name
+    string active_ingredient
+    string description
+  }
+  INVENTORY {
+    int inventory_id PK
+    int pharmacy_id FK
+    int drug_id FK
+    decimal price
+    int quantity
+    string availability_status
+    datetime updated_at
+  }
+  SEARCH_HISTORY {
+    int search_id PK
+    int user_id FK
+    int drug_id FK
+    string query_text
+    datetime searched_at
+  }
+  FAVORITES {
+    int favorite_id PK
+    int user_id FK
+    int drug_id FK
+    datetime created_at
+  }
+  ORDERS {
+    int order_id PK
+    int user_id FK
+    int pharmacy_id FK
+    string status
+    datetime ordered_at
+  }
+  ORDER_ITEMS {
+    int order_item_id PK
+    int order_id FK
+    int drug_id FK
+    int quantity
+    decimal unit_price
+  }
+  NOTIFICATIONS {
+    int notification_id PK
+    int user_id FK
+    string notification_type
+    string message
+    boolean is_read
+  }

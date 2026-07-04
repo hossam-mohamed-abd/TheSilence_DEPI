@@ -1,0 +1,26 @@
+%% Title: MediSearch ETL Pipeline
+flowchart TB
+  subgraph Extract[Extract]
+    Scrape[Scrape Pharmacy Product Pages]
+    Export[Receive Pharmacy Inventory Files]
+    OLTPExtract[Extract Main DB Events]
+  end
+  subgraph Transform[Transform]
+    Parse[Parse Product and Price Fields]
+    Clean[Remove Duplicates and Missing Critical Values]
+    Normalize[Normalize Drug Names, Categories, Cities]
+    Validate[Validate Schema and Data Quality]
+  end
+  subgraph Load[Load]
+    Raw[Load Raw Files to Backblaze B2]
+    Stage[Load Clean Data to Staging Bucket]
+    MainDB[Load Operational Reference Data]
+    Warehouse[Load Warehouse Dimensions and Facts]
+  end
+
+  Scrape --> Raw --> Parse
+  Export --> Raw
+  OLTPExtract --> Normalize
+  Parse --> Clean --> Normalize --> Validate --> Stage
+  Stage --> MainDB
+  Stage --> Warehouse

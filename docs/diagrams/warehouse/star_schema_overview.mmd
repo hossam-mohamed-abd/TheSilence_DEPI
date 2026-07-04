@@ -1,0 +1,66 @@
+%% Title: MediSearch Warehouse Star Schema Overview
+erDiagram
+  DIM_DATE ||--o{ FACT_SEARCH : by_date
+  DIM_USER ||--o{ FACT_SEARCH : by_user
+  DIM_DRUG ||--o{ FACT_SEARCH : searched_drug
+  DIM_PHARMACY ||--o{ FACT_INVENTORY_SNAPSHOT : stocks
+  DIM_DRUG ||--o{ FACT_INVENTORY_SNAPSHOT : inventory_drug
+  DIM_DATE ||--o{ FACT_INVENTORY_SNAPSHOT : snapshot_date
+  DIM_PHARMACY ||--o{ FACT_PHARMACY_PERFORMANCE : performs
+  DIM_DATE ||--o{ FACT_PHARMACY_PERFORMANCE : performance_date
+  DIM_DRUG ||--o{ FACT_RECOMMENDATION : recommended_drug
+  DIM_USER ||--o{ FACT_RECOMMENDATION : target_user
+
+  DIM_DATE {
+    int date_key PK
+    date calendar_date
+    string month_name
+    int year
+  }
+  DIM_USER {
+    int user_key PK
+    string role
+    string city
+    string segment
+  }
+  DIM_DRUG {
+    int drug_key PK
+    string drug_name
+    string category
+    string active_ingredient
+  }
+  DIM_PHARMACY {
+    int pharmacy_key PK
+    string pharmacy_name
+    string city
+    string branch
+  }
+  FACT_SEARCH {
+    int search_fact_key PK
+    int date_key FK
+    int user_key FK
+    int drug_key FK
+    int search_count
+  }
+  FACT_INVENTORY_SNAPSHOT {
+    int inventory_fact_key PK
+    int date_key FK
+    int pharmacy_key FK
+    int drug_key FK
+    int quantity
+    decimal price
+  }
+  FACT_PHARMACY_PERFORMANCE {
+    int performance_fact_key PK
+    int date_key FK
+    int pharmacy_key FK
+    int order_count
+    decimal revenue
+  }
+  FACT_RECOMMENDATION {
+    int recommendation_fact_key PK
+    int user_key FK
+    int drug_key FK
+    decimal score
+    boolean clicked
+  }

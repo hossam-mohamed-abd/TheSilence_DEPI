@@ -1,0 +1,17 @@
+%% Title: MediSearch Request and Response Lifecycle
+flowchart LR
+  Client[Angular HttpClient] --> Interceptor[Auth Interceptor]
+  Interceptor --> HTTPS[HTTPS Request]
+  HTTPS --> Router[Express Router]
+  Router --> Validation[Validation Middleware]
+  Validation --> Auth[JWT and Role Middleware]
+  Auth --> Controller[Controller]
+  Controller --> Service[Business Service]
+  Service --> Repo[Repository / Query Layer]
+  Repo --> DB[(Neon PostgreSQL)]
+  Service --> External[Storage, Warehouse, or AI Service]
+  DB --> Repo --> Service
+  External --> Service
+  Service --> Serializer[Response Serializer]
+  Serializer --> Controller --> Response[HTTP JSON Response]
+  Response --> Client

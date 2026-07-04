@@ -1,0 +1,15 @@
+%% Title: MediSearch Warehouse Loading Flow
+flowchart LR
+  Raw[Raw Data Bucket] --> Profile[Data Profiling]
+  Profile --> Clean[Clean and Validate]
+  Clean --> Stage[Staging Bucket]
+  Stage --> Conform[Conform Dimensions]
+  Conform --> DimLoad[Load Dimension Tables]
+  DimLoad --> FactBuild[Build Fact Tables]
+  FactBuild --> FactLoad[Load Warehouse Facts]
+  FactLoad --> Quality[Warehouse Quality Checks]
+  Quality --> Marts[Analytics Marts]
+  Marts --> BI[Dashboards, Reports, AI Features]
+
+  OLTP[(Operational DB)] --> Incremental[Incremental Extracts]
+  Incremental --> Conform

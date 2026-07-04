@@ -1,0 +1,25 @@
+%% Title: MediSearch Storage Architecture
+flowchart TB
+  subgraph Ingestion[Ingestion Sources]
+    Scrapers[Web Scrapers]
+    Uploads[Pharmacy Uploads]
+    Logs[Pipeline Logs]
+    Training[AI Training Datasets]
+  end
+
+  subgraph Storage[Cloud Storage Layers]
+    Landing[Supabase Storage Landing Zone]
+    Raw[Backblaze B2 Raw Historical Bucket]
+    Staging[Backblaze B2 DEPI-Staging-CleanData]
+    Warehouse[(Neon PostgreSQL Warehouse)]
+    Main[(Neon PostgreSQL Main DB)]
+  end
+
+  Scrapers --> Raw
+  Uploads --> Landing --> Raw
+  Logs --> Raw
+  Training --> Raw
+  Raw --> Staging
+  Staging --> Warehouse
+  Staging --> Main
+  Main --> Warehouse

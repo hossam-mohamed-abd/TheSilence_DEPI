@@ -1,0 +1,16 @@
+%% Title: MediSearch Security Access Control Flow
+flowchart TB
+  User[User Request] --> Identity[Authenticate Identity]
+  Identity --> Token{Valid JWT or Cookie?}
+  Token -->|No| Reject401[401 Unauthorized]
+  Token -->|Yes| Role[Resolve Role]
+  Role --> Decision{Requested Resource}
+  Decision -->|Patient Data| PatientPolicy[Patient owns profile, favorites, notifications]
+  Decision -->|Pharmacy Inventory| PharmacyPolicy[Pharmacy can manage own inventory and uploads]
+  Decision -->|Admin Operations| AdminPolicy[Admin can manage users, drugs, pharmacies, analytics]
+  PatientPolicy --> Permit[Permit]
+  PharmacyPolicy --> Permit
+  AdminPolicy --> Permit
+  Permit --> Audit[Write API, activity, and security logs]
+  Audit --> Response[Return Response]
+  Role -->|Insufficient role| Reject403[403 Forbidden]

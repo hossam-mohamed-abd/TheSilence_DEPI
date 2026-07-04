@@ -1,0 +1,15 @@
+%% Title: MediSearch End-to-End Data Lifecycle
+flowchart TB
+  Sources[External Pharmacy Sites, Public Drug Data, Pharmacy Exports] --> Raw[Backblaze B2 Raw Storage]
+  App[Web Application Transactions] --> OLTP[(Main Neon OLTP Database)]
+  Raw --> Cleaning[Cleaning: deduplicate, normalize, validate]
+  Cleaning --> Staging[Backblaze B2 Staging Storage]
+  Staging --> Transform[Transform: conform entities and build facts]
+  OLTP --> Extract[Operational Extracts]
+  Extract --> Transform
+  Transform --> Warehouse[(Neon OLAP Warehouse)]
+  Warehouse --> Analytics[Analytics and KPI Outputs]
+  Warehouse --> AI[AI Feature Store]
+  AI --> Models[Similarity Models and Recommendation Engine]
+  Analytics --> Decisions[Admin and Pharmacy Decisions]
+  Models --> UserExperience[Personalized Search, Alternatives, Alerts]

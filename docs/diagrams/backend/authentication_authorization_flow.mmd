@@ -1,0 +1,22 @@
+%% Title: MediSearch Authentication and Authorization Flow
+sequenceDiagram
+  autonumber
+  actor User
+  participant FE as Angular Frontend
+  participant API as Express API
+  participant Auth as Auth Controller and Middleware
+  participant DB as Users Table in Neon PostgreSQL
+  participant Role as Role Policy
+
+  User->>FE: Submit login/register form
+  FE->>API: POST credentials
+  API->>Auth: Validate input and credentials
+  Auth->>DB: Fetch or create user record
+  DB-->>Auth: User identity and role
+  Auth-->>FE: JWT/cookie session
+  User->>FE: Open protected feature
+  FE->>API: Request with JWT/cookie
+  API->>Auth: Verify token
+  Auth->>Role: Check Patient, Pharmacy, or Admin permission
+  Role-->>API: Permit or deny
+  API-->>FE: Protected data or 403 response

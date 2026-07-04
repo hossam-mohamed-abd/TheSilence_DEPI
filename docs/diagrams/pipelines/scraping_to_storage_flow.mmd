@@ -1,0 +1,10 @@
+%% Title: MediSearch Web Scraping to Storage Flow
+flowchart LR
+  Sources[Chefaa, Gardenia, Bloom, Al Dawaa Pharmacy Sites] --> Fetch[HTTP Fetch with Delay, Timeout, Retries]
+  Fetch --> ParseList[Parse Category Product Cards]
+  ParseList --> ParseDetail[Parse Product Details, Brand, Category, Availability]
+  ParseDetail --> Translate[Generate English Name When Needed]
+  Translate --> JSON[Write Structured JSON / CSV]
+  JSON --> Raw[Backblaze B2 Raw Data Storage]
+  Raw --> Cleaning[Cleaning Pipeline]
+  Cleaning --> Staging[Backblaze B2 Staging Storage]

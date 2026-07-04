@@ -1,0 +1,38 @@
+%% Title: MediSearch Deployment Architecture
+flowchart TB
+  Dev[Developer Workstation] --> GitHub[GitHub Repositories]
+  GitHub --> VercelFE[Vercel Frontend Project]
+  GitHub --> VercelBE[Vercel Backend Project]
+
+  subgraph Edge[Vercel Edge Network]
+    CDN[Global CDN]
+    AngularBuild[Angular Static Build]
+    Serverless[Node.js Serverless Functions]
+  end
+
+  subgraph ManagedData[Managed Data Services]
+    MainNeon[(Neon Main PostgreSQL)]
+    WarehouseNeon[(Neon Warehouse PostgreSQL)]
+    Supabase[(Supabase Storage Landing Zone)]
+    BackblazeRaw[(Backblaze B2 Raw Bucket)]
+    BackblazeStage[(Backblaze B2 Staging Bucket)]
+  end
+
+  subgraph Operations[Operations]
+    Env[Vercel Environment Variables]
+    Secrets[CI/CD Secrets]
+    Health[Health Checks]
+    Logs[Runtime Logs]
+  end
+
+  VercelFE --> CDN --> AngularBuild
+  VercelBE --> Serverless
+  AngularBuild --> Serverless
+  Serverless --> MainNeon
+  Serverless --> Supabase
+  Serverless --> BackblazeRaw
+  BackblazeRaw --> BackblazeStage --> WarehouseNeon
+  Env --> AngularBuild
+  Env --> Serverless
+  Secrets --> Env
+  Serverless --> Logs --> Health
