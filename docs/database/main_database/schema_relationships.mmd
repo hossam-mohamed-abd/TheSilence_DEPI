@@ -1,0 +1,99 @@
+%% Title: MediSearch Main Operational Database Entity Relationships
+erDiagram
+    USERS ||--o{ FAVORITES : saves
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ SEARCH_LOGS : performs
+    USERS ||--o{ PHARMACY_STAFF : works_as
+
+    PHARMACIES ||--o{ PHARMACY_STAFF : employs
+    PHARMACIES ||--o{ INVENTORY : maintains
+
+    DRUG_CATEGORIES ||--o{ DRUGS : classifies
+    DRUGS ||--o{ INVENTORY : stocked_as
+    DRUGS ||--o{ FAVORITES : favorited_in
+    DRUGS ||--o{ SEARCH_LOGS : searched_for
+    DRUGS }o--o{ DRUG_TAGS : labeled_with
+
+    USERS {
+        uuid user_id PK
+        string full_name
+        string email UK
+        string phone
+        string role
+        timestamp created_at
+    }
+
+    PHARMACIES {
+        uuid pharmacy_id PK
+        string pharmacy_name
+        string license_number UK
+        string address
+        string city
+        string status
+    }
+
+    PHARMACY_STAFF {
+        uuid staff_id PK
+        uuid user_id FK
+        uuid pharmacy_id FK
+        string staff_role
+        string employment_status
+        timestamp joined_at
+    }
+
+    DRUG_CATEGORIES {
+        uuid category_id PK
+        string category_name UK
+        string description
+    }
+
+    DRUGS {
+        uuid drug_id PK
+        uuid category_id FK
+        string generic_name
+        string brand_name
+        string dosage_form
+        string strength
+        boolean prescription_required
+    }
+
+    DRUG_TAGS {
+        uuid tag_id PK
+        string tag_name UK
+        string tag_type
+    }
+
+    INVENTORY {
+        uuid inventory_id PK
+        uuid pharmacy_id FK
+        uuid drug_id FK
+        integer quantity_available
+        decimal unit_price
+        date expiration_date
+        timestamp last_updated_at
+    }
+
+    FAVORITES {
+        uuid favorite_id PK
+        uuid user_id FK
+        uuid drug_id FK
+        timestamp created_at
+    }
+
+    NOTIFICATIONS {
+        uuid notification_id PK
+        uuid user_id FK
+        string notification_type
+        string message
+        boolean is_read
+        timestamp created_at
+    }
+
+    SEARCH_LOGS {
+        uuid search_log_id PK
+        uuid user_id FK
+        uuid drug_id FK
+        string search_query
+        string city_filter
+        timestamp searched_at
+    }

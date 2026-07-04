@@ -1,0 +1,22 @@
+%% Title: MediSearch End-to-End Data Lifecycle
+flowchart TD
+    external["External Sources<br/>Public drug references, pharmacy feeds, operational systems"] --> raw["Raw Data<br/>Immutable source-aligned landing data"]
+    raw --> cleaning["Cleaning<br/>Quality checks, normalization, duplicate handling"]
+    cleaning --> staging["Staging<br/>Structured intermediate data models"]
+    staging --> warehouse["Warehouse<br/>Facts, dimensions, history, aggregates"]
+    warehouse --> analytics["Analytics<br/>Dashboards, KPIs, BI reports"]
+    analytics --> ai["AI<br/>Recommendation inputs, demand signals, predictive features"]
+
+    ai -. model insights .-> analytics
+    analytics -. metric definitions .-> warehouse
+    cleaning -. exception reports .-> external
+
+    classDef source fill:#e0f2fe,stroke:#0369a1,stroke-width:2px,color:#0f172a;
+    classDef process fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#0f172a;
+    classDef data fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#0f172a;
+    classDef output fill:#ede9fe,stroke:#6d28d9,stroke-width:2px,color:#0f172a;
+
+    class external source;
+    class cleaning process;
+    class raw,staging,warehouse data;
+    class analytics,ai output;

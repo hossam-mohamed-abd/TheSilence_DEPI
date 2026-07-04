@@ -1,0 +1,20 @@
+%% Title: MediSearch Data Warehouse Processing Flow
+flowchart TD
+    raw["Raw Storage<br/>Operational extracts, external files, API snapshots"] --> cleaning["Cleaning<br/>Validation, deduplication, standardization"]
+    cleaning --> staging["Staging<br/>Load-ready normalized staging tables"]
+    staging --> transformation["Transformation<br/>Conformed dimensions, fact derivation, history handling"]
+    transformation --> warehouse[("Analytics Warehouse<br/>Neon PostgreSQL OLAP")]
+    warehouse --> analytics["Analytics & BI<br/>Dashboards, KPIs, reports, AI-ready features"]
+
+    raw -. data quality feedback .-> cleaning
+    analytics -. business rules feedback .-> transformation
+
+    classDef storage fill:#e0f2fe,stroke:#0369a1,stroke-width:2px,color:#0f172a;
+    classDef process fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#0f172a;
+    classDef warehouse fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#0f172a;
+    classDef output fill:#ede9fe,stroke:#6d28d9,stroke-width:2px,color:#0f172a;
+
+    class raw,staging storage;
+    class cleaning,transformation process;
+    class warehouse warehouse;
+    class analytics output;
