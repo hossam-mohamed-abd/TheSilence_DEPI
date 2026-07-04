@@ -1,0 +1,75 @@
+%% Title: MediSearch High-Level Enterprise Architecture
+flowchart TB
+  classDef client fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+  classDef app fill:#DCFCE7,stroke:#16A34A,color:#14532D
+  classDef data fill:#FEF3C7,stroke:#D97706,color:#78350F
+  classDef ai fill:#F3E8FF,stroke:#7C3AED,color:#3B0764
+  classDef ops fill:#E5E7EB,stroke:#4B5563,color:#111827
+
+  subgraph Users[User Channels]
+    Patient[Patient]
+    Pharmacy[Pharmacy Staff]
+    Admin[Admin]
+  end
+
+  subgraph Frontend[Angular Frontend on Vercel]
+    Landing[Landing & Public Search]
+    UserPortal[Patient Portal]
+    PharmacyPortal[Pharmacy Dashboard]
+    AdminPortal[Admin Dashboard]
+  end
+
+  subgraph Backend[Express.js Backend on Vercel Serverless]
+    API[REST API Layer]
+    Auth[JWT & Cookie Authentication]
+    Services[Business Services]
+    Uploads[Inventory Upload Integration]
+  end
+
+  subgraph DataPlatform[Data Platform]
+    MainDB[(Neon PostgreSQL OLTP)]
+    Raw[(Backblaze B2 Raw Data)]
+    Staging[(Backblaze B2 Staging Data)]
+    Warehouse[(Neon PostgreSQL OLAP Warehouse)]
+  end
+
+  subgraph Intelligence[Analytics & AI]
+    Analytics[KPI & Dashboard Analytics]
+    Features[AI Feature Store]
+    Recommend[Recommendation Engine]
+    Alerts[Health & Stock Alerts]
+  end
+
+  subgraph Sources[External Data Sources]
+    Scrapers[Pharmacy Web Scrapers]
+    PharmacyExports[Pharmacy Inventory Exports]
+    PublicDatasets[Drug Reference Data]
+  end
+
+  Patient --> Landing
+  Patient --> UserPortal
+  Pharmacy --> PharmacyPortal
+  Admin --> AdminPortal
+  Frontend --> API
+  API --> Auth
+  API --> Services
+  Services --> MainDB
+  Services --> Uploads
+  Uploads --> Raw
+  Scrapers --> Raw
+  PharmacyExports --> Raw
+  PublicDatasets --> Raw
+  Raw --> Staging --> Warehouse
+  MainDB --> Warehouse
+  Warehouse --> Analytics
+  Warehouse --> Features --> Recommend
+  Recommend --> API
+  Analytics --> AdminPortal
+  Alerts --> API
+  Warehouse --> Alerts
+
+  class Patient,Pharmacy,Admin,Landing,UserPortal,PharmacyPortal,AdminPortal client
+  class API,Auth,Services,Uploads app
+  class MainDB,Raw,Staging,Warehouse data
+  class Analytics,Features,Recommend,Alerts ai
+  class Scrapers,PharmacyExports,PublicDatasets ops

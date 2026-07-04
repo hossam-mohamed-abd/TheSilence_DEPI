@@ -1,0 +1,16 @@
+%% Title: MediSearch Backend Request Lifecycle
+flowchart LR
+  Request[Incoming HTTPS Request] --> Router[Express Route]
+  Router --> Parse[Body and Cookie Parsing]
+  Parse --> Validate[Input Validation]
+  Validate --> Auth[Authentication Middleware]
+  Auth --> Authorize[Role Authorization]
+  Authorize --> Controller[Controller Action]
+  Controller --> Service[Domain Service]
+  Service --> Repository[Repository]
+  Repository --> DB[(Neon PostgreSQL)]
+  Service --> Integrations[AI, Storage, Warehouse Integrations]
+  DB --> Repository --> Service --> Controller
+  Integrations --> Service
+  Controller --> ErrorHandling[Error Handling / Response Mapping]
+  ErrorHandling --> Response[JSON Response]

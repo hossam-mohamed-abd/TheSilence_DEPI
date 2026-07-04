@@ -1,0 +1,31 @@
+%% Title: MediSearch AI Recommendation Engine Workflow
+flowchart TB
+  subgraph Inputs[Recommendation Inputs]
+    DrugProfile[Drug Name, Category, Active Ingredients]
+    UserSignals[Search History, Favorites, Clicks]
+    InventorySignals[Price, Stock, Pharmacy Availability]
+    WarehouseFacts[Warehouse Facts and Aggregates]
+  end
+
+  subgraph FeatureEngineering[Feature Engineering]
+    Normalize[Normalize Text and Categories]
+    Vectorize[Create TF-IDF / Embedding Vectors]
+    Similarity[Compute Drug Similarity Scores]
+    Context[Apply Availability and Price Context]
+  end
+
+  subgraph Serving[Serving Workflow]
+    Request[Frontend Recommendation Request]
+    Backend[Express Recommendation Endpoint]
+    Ranker[Ranking and Filtering]
+    Explain[Alternative Explanation]
+    Response[Recommended Drugs and Alternatives]
+  end
+
+  DrugProfile --> Normalize
+  UserSignals --> Context
+  InventorySignals --> Context
+  WarehouseFacts --> Vectorize
+  Normalize --> Vectorize --> Similarity --> Ranker
+  Context --> Ranker
+  Request --> Backend --> Ranker --> Explain --> Response

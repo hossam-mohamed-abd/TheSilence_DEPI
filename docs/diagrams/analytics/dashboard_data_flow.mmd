@@ -1,0 +1,22 @@
+%% Title: MediSearch Analytics Dashboard Data Flow
+flowchart LR
+  OLTP[(Main Operational Database)] --> Extract[Extract Search, Inventory, Orders, Users]
+  Raw[(Raw Storage)] --> Clean[Cleaning and Validation]
+  Extract --> Transform[Transform and Aggregate]
+  Clean --> Transform
+  Transform --> Warehouse[(OLAP Warehouse)]
+  Warehouse --> Metrics[Metric Layer]
+  Metrics --> KPI[KPI Tables]
+  KPI --> Dashboards[Admin and Pharmacy Dashboards]
+  KPI --> Reports[Aggregated Reports]
+
+  subgraph KPIs[Tracked KPIs]
+    SearchDemand[Top Searched Drugs]
+    PriceTrends[Price Trends]
+    Availability[Availability and Stock Health]
+    PharmacyPerf[Pharmacy Performance]
+    Engagement[User Engagement]
+  end
+
+  Metrics --> SearchDemand & PriceTrends & Availability & PharmacyPerf & Engagement
+  SearchDemand & PriceTrends & Availability & PharmacyPerf & Engagement --> Dashboards

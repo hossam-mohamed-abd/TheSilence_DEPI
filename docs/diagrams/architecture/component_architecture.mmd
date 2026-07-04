@@ -1,0 +1,63 @@
+%% Title: MediSearch Component Architecture
+flowchart LR
+  classDef ui fill:#E0F2FE,stroke:#0284C7
+  classDef backend fill:#DCFCE7,stroke:#16A34A
+  classDef data fill:#FEF3C7,stroke:#D97706
+  classDef ai fill:#F3E8FF,stroke:#7C3AED
+
+  subgraph Angular[Angular Application]
+    Router[Angular Router]
+    Guards[Auth Guards]
+    Interceptors[HTTP Interceptors]
+    Pages[Feature Pages]
+    Shared[Shared Components]
+    ApiClient[REST API Client Services]
+  end
+
+  subgraph Express[Express Backend]
+    Routes[Routes]
+    Middleware[Auth & Validation Middleware]
+    Controllers[Controllers]
+    DomainServices[Domain Services]
+    Repositories[Database Access]
+  end
+
+  subgraph Domains[Core Business Domains]
+    Users[Users & Roles]
+    Drugs[Drugs & Categories]
+    Inventory[Inventory, Prices & Availability]
+    Favorites[Favorites & Notifications]
+    Search[Search History & Analytics Events]
+  end
+
+  subgraph Data[Persistence & Storage]
+    OLTP[(Main Neon PostgreSQL)]
+    B2Raw[(Backblaze B2 Raw)]
+    B2Stage[(Backblaze B2 Staging)]
+    OLAP[(Warehouse PostgreSQL)]
+  end
+
+  subgraph AI[AI and Analytics Services]
+    Similarity[Drug Similarity]
+    Alternatives[Drug Alternatives]
+    Recommendations[Personalized Recommendations]
+    KPIs[KPI Generation]
+  end
+
+  Router --> Guards --> Pages
+  Pages --> Shared
+  Pages --> ApiClient --> Routes
+  Routes --> Middleware --> Controllers --> DomainServices
+  DomainServices --> Users & Drugs & Inventory & Favorites & Search
+  DomainServices --> Repositories --> OLTP
+  DomainServices --> Recommendations
+  Recommendations --> Similarity --> Alternatives
+  Search --> OLAP
+  Inventory --> B2Raw --> B2Stage --> OLAP
+  OLAP --> KPIs
+  KPIs --> Controllers
+
+  class Router,Guards,Interceptors,Pages,Shared,ApiClient ui
+  class Routes,Middleware,Controllers,DomainServices,Repositories backend
+  class OLTP,B2Raw,B2Stage,OLAP data
+  class Similarity,Alternatives,Recommendations,KPIs ai

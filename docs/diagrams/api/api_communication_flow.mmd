@@ -1,0 +1,29 @@
+%% Title: MediSearch API Communication Flow
+sequenceDiagram
+  autonumber
+  actor User as Patient / Pharmacy / Admin
+  participant Web as Angular Frontend
+  participant Guard as Route Guard / Interceptor
+  participant API as Express REST API
+  participant Auth as JWT Auth Middleware
+  participant Service as Domain Service
+  participant DB as Neon PostgreSQL
+  participant AI as Recommendation Service
+
+  User->>Web: Use MediSearch feature
+  Web->>Guard: Resolve route and attach credentials
+  Guard->>API: HTTPS REST request with JWT/cookie
+  API->>Auth: Validate identity and role
+  Auth-->>API: Authorized request context
+  API->>Service: Execute use case
+  alt Transactional data required
+    Service->>DB: Query users, drugs, inventory, favorites
+    DB-->>Service: Domain data
+  end
+  alt Recommendation or alternatives required
+    Service->>AI: Request similarity or recommendation output
+    AI-->>Service: Ranked drugs / alternatives
+  end
+  Service-->>API: Response DTO
+  API-->>Web: JSON response and status code
+  Web-->>User: Render result, dashboard, or notification
