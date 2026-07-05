@@ -1,0 +1,283 @@
+version: 2
+
+# ──────────────────────────────────────────────────────────────
+# models/core/schema.yml
+#
+# Documents all core models in the Drug Tracking System pipeline.
+#
+# Core layer responsibilities:
+#   - Produce the final business-ready tables pushed to PostgreSQL
+#   - Enforce FK relationships by joining against sibling core models
+#   - Generate synthetic PKs (id) via ROW_NUMBER() where needed
+#   - Preserve trusted IDs from CSV where the data team supplies them
+#   - Auto-fill gaps (e.g. unknown drugs from pharmacy inventory)
+#
+# Materialisation: table (persisted in DuckDB on every dbt run)
+# Schema in DuckDB: main_core
+# ──────────────────────────────────────────────────────────────
+
+models:
+
+  # ──────────────────────────────────────────
+  # 1. CORE_DRUG_CATEGORIES
+  # ──────────────────────────────────────────
+  - name: core_drug_categories
+    description: |
+      Final drug categories table. Simple pass-through from
+      stg_drug_categories — selects all columns without further
+      transformation.
+
+      id is trusted directly from the seed CSV and never generated.
+      This is critical: the drugs seed references these exact IDs
+      via its category_id column, so ID stability must be preserved
+      across every pipeline run.
+
+      Pushed to PostgreSQL as the drug_categories table.
+      FK dependency: must be pushed before drugs.
+    columns:
+      - name: id
+        description: |
+          Primary key. Trusted from the source CSV.
+          Referenced as category_id in the drugs table.
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: Unique display name of the drug category.
+        tests:
+          - not_null
+          - unique
+
+      - name: description
+        description: |
+          Optional. Free-text description of the category's therapeutic scope.
+          NULL for categories that were seeded without a description.
+
+      - name: created_at
+        description: |
+          Optional. Timestamp when the category was first created.
+          NULL for historically seeded records.
+
+
+  # ──────────────────────────────────────────
+  # 2. CORE_DRUGS
+  # ──────────────────────────────────────────
+  - name: core_drugs
+    description: |
+      Final drug reference table. A simple pass-through from stg_drugs.
+
+      drugs.csv (maintained by the data team) is the single source of
+      truth for the drug catalogue. id and all fields are trusted as-is
+      from the seed CSV.
+
+      REMOVED (post-migration audit): an earlier version of this model
+      auto-catalogued drugs discovered in pharmacy inventory uploads
+      that didn't yet exist here, assigning them synthetic IDs starting
+      from MAX(existing id) + 1. That mechanism depended on pharmacy
+      inventory carrying a drug NAME to detect an unknown drug from.
+      Per the ERD, pharmacy_inventory carries drug_id directly — there
+      is no name in pharmacy uploads to auto-catalogue a new drug from.
+      A drug_id with no matching row here is now a data integrity issue:
+      the corresponding inventory row is dropped in
+      core_pharmacy_inventory.sql, not auto-added.
+
+      ASSUMPTION (to be revisited): pharmacies — or whatever system sits
+      between them and our pipeline — resolve drug names to our internal
+      drug_id before the file reaches Supabase Storage, and any new drug
+      is catalogued here by the data team before or alongside that
+      resolution.
+
+      Feeds all downstream models: core_pharmacy_inventory (drug_id
+      validation), core_drug_alternatives (ID validation), drug_analytics.
+
+      Pushed to PostgreSQL as the drugs table.
+      FK dependency: must be pushed after drug_categories, before all others.
+    columns:
+      - name: id
+        description: |
+          Primary key. Trusted from the drugs.csv seed CSV.
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: |
+          Trade/brand name of the drug. Unique across all drugs.
+          Descriptive/display data — no longer used as a join key
+          downstream, since pharmacy_inventory carries drug_id directly.
+        tests:
+          - not_null
+          - unique
+
+      - name: active_substance
+        description: |
+          Active pharmaceutical ingredient (API).
+          Previously named active_ingredient in the old schema.
+          Optional — may be NULL if not supplied in the seed CSV.
+
+      - name: category_id
+        description: |
+          Foreign key referencing drug_categories.id.
+          Optional — may be NULL if not supplied in the seed CSV.
+
+      - name: dosage_form
+        description: |
+          Optional. Physical form of the drug. NULL if not supplied.
+
+      - name: strength
+        description: |
+          Optional. Active substance concentration per unit dose.
+          NULL if not supplied.
+
+      - name: manufacturer
+        description: |
+          Optional. Pharmaceutical manufacturer name. NULL if not supplied.
+
+      - name: description
+        description: |
+          Optional free-text description. NULL if not supplied.
+
+      - name: image_url
+        description: |
+          Optional. URL to the drug product image. NULL if not supplied.
+
+      - name: created_at
+        description: |
+          Optional. Record creation timestamp. NULL for historically
+          seeded records.
+
+      - name: updated_at
+        description: |
+          Optional. Last update timestamp. NULL for historically
+          seeded records.
+
+
+  # ──────────────────────────────────────────
+  # 3. CORE_DRUG_ALTERNATIVES
+  # ──────────────────────────────────────────
+  - name: core_drug_alternatives
+    description: |
+      Final drug alternatives mapping table.
+      Validates that both drug_id and alternative_drug_id exist in
+      core_drugs before including the pair — invalid pairs (referencing
+      drugs not in the catalogue) are silently dropped via INNER JOIN.
+
+      A synthetic id is generated using ROW_NUMBER() ordered by
+      (drug_id, alternative_drug_id) for deterministic assignment.
+
+      Pushed to PostgreSQL as the drug_alternatives table.
+      FK dependency: must be pushed after drugs.
+    columns:
+      - name: id
+        description: |
+          Synthetic primary key. Generated by ROW_NUMBER() ordered by
+          (drug_id, alternative_drug_id). Deterministic across runs
+          as long as the set of valid pairs does not change.
+        tests:
+          - not_null
+          - unique
+
+      - name: drug_id
+        description: |
+          Foreign key referencing drugs.id. Validated via INNER JOIN
+          against core_drugs — pairs where this ID does not exist are dropped.
+        tests:
+          - not_null
+
+      - name: alternative_drug_id
+        description: |
+          Foreign key referencing drugs.id. Validated via INNER JOIN
+          against core_drugs — pairs where this ID does not exist are dropped.
+          Guaranteed to differ from drug_id (self-references removed in staging).
+        tests:
+          - not_null
+
+
+  # ──────────────────────────────────────────
+  # 4. CORE_PHARMACY_INVENTORY
+  # ──────────────────────────────────────────
+  - name: core_pharmacy_inventory
+    description: |
+      Final pharmacy inventory table. Replaces the old core_drug_prices model.
+
+      Validates that drug_id exists in core_drugs via an INNER JOIN
+      against core_drugs.id. Rows whose drug_id has no match are
+      excluded — not auto-added, since a bare ID with no name provides
+      nothing to catalogue a new drug from (see core_drugs description).
+
+      NOTE (post-migration audit): an earlier version of this model
+      resolved drug_id from pharmacy-uploaded drug NAMES by joining on
+      a case-insensitive, trimmed name match. That resolution step has
+      been removed entirely — per the ERD, pharmacies upload drug_id
+      directly. This model now validates the incoming ID rather than
+      resolving it.
+
+      ASSUMPTION (to be revisited): pharmacies — or whatever system sits
+      between them and our pipeline — resolve drug names to our internal
+      drug_id before the file reaches Supabase Storage.
+
+      A synthetic id is generated using ROW_NUMBER() ordered by
+      (pharmacy_id, drug_id).
+
+      This model is the source for both dbt snapshots:
+        - price_history    (tracks changes in price)
+        - availability_history (tracks changes in quantity > 0)
+
+      Pushed to PostgreSQL as the pharmacy_inventory table.
+      FK dependency: must be pushed after drugs.
+    columns:
+      - name: id
+        description: |
+          Synthetic primary key. Generated by ROW_NUMBER() ordered
+          by (pharmacy_id, drug_id). Deterministic within a run.
+        tests:
+          - not_null
+          - unique
+
+      - name: pharmacy_id
+        description: |
+          ID of the pharmacy. Foreign key referencing pharmacies.id
+          (owned by the backend team). Passed through from the seed
+          after being cast to INTEGER in staging.
+        tests:
+          - not_null
+
+      - name: drug_id
+        description: |
+          Internal drug ID, provided directly by the pharmacy and
+          passed through from staging. Validated (existence-checked,
+          not resolved) via INNER JOIN against core_drugs.id — rows
+          with no match are dropped.
+        tests:
+          - not_null
+
+      - name: quantity
+        description: |
+          Current stock quantity at this pharmacy.
+          Drives availability: quantity > 0 means the drug is available.
+          Watched by the availability_history snapshot via the derived
+          expression (quantity > 0) AS available.
+        tests:
+          - not_null
+
+      - name: minimum_stock
+        description: |
+          Minimum stock threshold set by the pharmacy for this drug.
+          Used for low-stock alerting logic downstream.
+        tests:
+          - not_null
+
+      - name: price
+        description: |
+          Current retail price at this pharmacy.
+          Watched by the price_history snapshot via check_cols = ['price'].
+        tests:
+          - not_null
+
+      - name: last_updated
+        description: |
+          Timestamp of the pharmacy's most recent stock update.
+          Used as the ordering reference in both dbt snapshots.
+        tests:
+          - not_null

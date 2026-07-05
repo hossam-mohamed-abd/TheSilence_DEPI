@@ -1,0 +1,176 @@
+version: 2
+
+# ──────────────────────────────────────────────────────────────
+# snapshots/schema.yml
+#
+# Documents all snapshot models in the Drug Tracking System pipeline.
+#
+# Snapshot layer responsibilities:
+#   - Detect changes in core_pharmacy_inventory on every pipeline run
+#   - Maintain a full historical record of every change
+#   - Feed the price_history and availability_history tables in PostgreSQL
+#
+# Strategy: check — compares specified columns against their last known
+# value. When a change is detected, the old record is closed
+# (dbt_valid_to is set) and a new record is opened.
+#
+# Materialisation: dbt-managed SCD Type 2 table in DuckDB
+# Schema in DuckDB: snapshots
+#
+# dbt adds these system columns to every snapshot table automatically:
+#   dbt_scd_id    — unique surrogate key for each snapshot record
+#   dbt_updated_at — when dbt last processed this record
+#   dbt_valid_from — when this version of the record became active
+#   dbt_valid_to   — when this version was superseded (NULL = still active)
+#
+# push_to_postgres.py reads dbt_valid_from and renames it:
+#   price_history        → recorded_at
+#   availability_history → checked_at
+# ──────────────────────────────────────────────────────────────
+
+snapshots:
+
+  # ──────────────────────────────────────────
+  # 1. PRICE_HISTORY
+  # ──────────────────────────────────────────
+  - name: price_history
+    description: |
+      SCD Type 2 snapshot that tracks price changes over time
+      for every drug at every pharmacy.
+
+      Source:       core_pharmacy_inventory
+      Unique key:   id (the synthetic PK of core_pharmacy_inventory)
+      Watched col:  price
+      Strategy:     check
+
+      How it works:
+        On each pipeline run, dbt compares the current price in
+        core_pharmacy_inventory against the last recorded price for
+        each (pharmacy_id, drug_id) pair.
+        - If price is unchanged → no action.
+        - If price has changed  → the old record is closed (dbt_valid_to set)
+          and a new record is inserted with the updated price.
+        - If a record disappears from core_pharmacy_inventory
+          (invalidate_hard_deletes = True) → the record is closed.
+
+      push_to_postgres.py reads this snapshot and appends only new
+      records (those with dbt_valid_from > MAX(recorded_at) in PostgreSQL)
+      to the price_history table, renaming dbt_valid_from → recorded_at.
+
+      Supports FR-12: notify patients of price changes for tracked drugs.
+    columns:
+      - name: id
+        description: |
+          The id from core_pharmacy_inventory — used as the unique_key
+          for dbt to identify and track each inventory record.
+        tests:
+          - not_null
+
+      - name: drug_id
+        description: |
+          Foreign key referencing drugs.id. Identifies which drug
+          this price record belongs to.
+        tests:
+          - not_null
+
+      - name: pharmacy_id
+        description: |
+          ID of the pharmacy this price record belongs to.
+          References pharmacies.id (owned by the backend team).
+        tests:
+          - not_null
+
+      - name: price
+        description: |
+          The retail price at the time this snapshot record was created.
+          This is the watched column — any change in this value triggers
+          a new snapshot record. Stored as NUMERIC(10,2) in PostgreSQL.
+        tests:
+          - not_null
+
+      - name: last_updated
+        description: |
+          The last_updated timestamp from core_pharmacy_inventory at the
+          time this snapshot record was captured. Provides context for
+          when the pharmacy reported this price.
+        tests:
+          - not_null
+
+
+  # ──────────────────────────────────────────
+  # 2. AVAILABILITY_HISTORY
+  # ──────────────────────────────────────────
+  - name: availability_history
+    description: |
+      SCD Type 2 snapshot that tracks availability changes over time
+      for every drug at every pharmacy.
+
+      Source:       core_pharmacy_inventory
+      Unique key:   id (the synthetic PK of core_pharmacy_inventory)
+      Watched col:  available  (derived as: quantity > 0)
+      Strategy:     check
+
+      How it works:
+        On each pipeline run, dbt evaluates (quantity > 0) for each
+        (pharmacy_id, drug_id) pair in core_pharmacy_inventory and
+        compares it to the last recorded availability boolean.
+        - If availability is unchanged → no action.
+        - If a drug went from in-stock to out-of-stock (or vice versa)
+          → the old record is closed and a new record is inserted
+          reflecting the new availability state.
+        - If a record disappears from core_pharmacy_inventory
+          (invalidate_hard_deletes = True) → the record is closed.
+
+      IMPORTANT: "available" is a derived column, not a stored column
+      in pharmacy_inventory. The derivation (quantity > 0) happens
+      inside this snapshot's SELECT statement.
+
+      push_to_postgres.py reads this snapshot and appends only new
+      records (those with dbt_valid_from > MAX(checked_at) in PostgreSQL)
+      to the availability_history table, renaming dbt_valid_from → checked_at.
+
+      Supports:
+        FR-9:  suggest alternatives when a drug is available in < 3 pharmacies
+        FR-13: notify pharmacy when a frequently searched drug is unavailable
+        FR-19: notify patient when a previously unavailable drug is back in stock
+    columns:
+      - name: id
+        description: |
+          The id from core_pharmacy_inventory — used as the unique_key
+          for dbt to identify and track each inventory record.
+        tests:
+          - not_null
+
+      - name: drug_id
+        description: |
+          Foreign key referencing drugs.id. Identifies which drug
+          this availability record belongs to.
+        tests:
+          - not_null
+
+      - name: pharmacy_id
+        description: |
+          ID of the pharmacy this availability record belongs to.
+          References pharmacies.id (owned by the backend team).
+        tests:
+          - not_null
+
+      - name: available
+        description: |
+          Boolean availability status at the time this snapshot record
+          was created. Derived from core_pharmacy_inventory as:
+            available = (quantity > 0)
+          TRUE  = drug is in stock at this pharmacy (quantity ≥ 1)
+          FALSE = drug is out of stock (quantity = 0)
+          This is the watched column — any flip in this boolean triggers
+          a new snapshot record.
+        tests:
+          - not_null
+
+      - name: last_updated
+        description: |
+          The last_updated timestamp from core_pharmacy_inventory at the
+          time this snapshot record was captured. Provides context for
+          when the pharmacy reported this availability state.
+        tests:
+          - not_null

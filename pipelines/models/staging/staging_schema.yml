@@ -1,0 +1,257 @@
+version: 2
+
+# ──────────────────────────────────────────────────────────────
+# models/staging/schema.yml
+#
+# Documents all staging models in the Drug Tracking System pipeline.
+#
+# Staging layer responsibilities:
+#   - Read directly from dbt seeds (normalised CSV files)
+#   - Cast columns to correct data types (TRY_CAST)
+#   - Apply NULL handling and default values
+#   - Remove invalid rows (NULL names, NULL IDs)
+#   - Deduplicate within each table
+#   - NO business logic — that belongs in core/
+#
+# Materialisation: view (rebuilt on every dbt run, no storage cost)
+# Schema in DuckDB: main_staging
+# ──────────────────────────────────────────────────────────────
+
+models:
+
+  # ──────────────────────────────────────────
+  # 1. STG_DRUG_CATEGORIES
+  # ──────────────────────────────────────────
+  - name: stg_drug_categories
+    description: |
+      Staging model for drug categories.
+      Reads from the drug_categories seed, casts all columns to their
+      correct types, filters out rows with a NULL or empty name, and
+      deduplicates by id using ROW_NUMBER() — keeping the first occurrence
+      ordered by name.
+
+      Deduplication strategy changed from SELECT DISTINCT to ROW_NUMBER()
+      when description was added: DISTINCT would no longer collapse rows
+      with the same id but different description values.
+
+      Feeds: core_drug_categories
+    columns:
+      - name: id
+        description: |
+          Primary key of drug_categories. Cast from the seed as INTEGER.
+          Rows with a NULL id are filtered out in the WHERE clause.
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: |
+          Category name, trimmed of leading/trailing whitespace.
+          Rows with a NULL or empty name are filtered out.
+        tests:
+          - not_null
+
+      - name: description
+        description: |
+          Optional. Free-text description of the category's therapeutic
+          purpose. Passed through as-is after trimming. May be NULL.
+
+      - name: created_at
+        description: |
+          Optional. Creation timestamp, cast via TRY_CAST to TIMESTAMP.
+          Returns NULL if the source value cannot be parsed.
+
+
+  # ──────────────────────────────────────────
+  # 2. STG_DRUGS
+  # ──────────────────────────────────────────
+  - name: stg_drugs
+    description: |
+      Staging model for the master drug reference table.
+      Reads from the drugs seed and performs type casting, whitespace
+      trimming, and deduplication.
+
+      Deduplication strategy: ROW_NUMBER() partitioned by
+      LOWER(TRIM(name)) ordered by id — keeping the record with
+      the lowest id for each unique drug name. This prevents duplicate
+      name conflicts from causing FK resolution failures downstream in
+      core_pharmacy_inventory.
+
+      NOTE: id is trusted from the CSV and never auto-generated here.
+      Auto-assignment of IDs for unknown drugs happens in core_drugs.sql.
+
+      Feeds: core_drugs
+    columns:
+      - name: id
+        description: |
+          Primary key. Cast as INTEGER. Rows with NULL id are filtered out.
+          This value is trusted from the source CSV — it must match the IDs
+          referenced in drug_alternatives.csv.
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: |
+          Trade/brand name of the drug. Trimmed of whitespace.
+          Rows with NULL or empty name are excluded.
+          Used as the join key in core_pharmacy_inventory to resolve
+          drug_id from pharmacy-uploaded inventory files.
+        tests:
+          - not_null
+
+      - name: active_substance
+        description: |
+          Active pharmaceutical ingredient. Trimmed of whitespace.
+          Previously named active_ingredient in the old schema.
+          Optional — may be NULL for incomplete records.
+
+      - name: category_id
+        description: |
+          Foreign key referencing drug_categories.id.
+          Cast as INTEGER. May be NULL if not provided in the source CSV.
+
+      - name: dosage_form
+        description: |
+          Optional. Physical form of the drug (e.g. Tablet, Capsule).
+          Trimmed of whitespace. NULL if not provided.
+
+      - name: strength
+        description: |
+          Optional. Active substance concentration per unit dose
+          (e.g. 500mg, 250mg/5ml). Trimmed of whitespace. NULL if not provided.
+
+      - name: manufacturer
+        description: |
+          Optional. Name of the drug manufacturer. Trimmed. NULL if not provided.
+
+      - name: description
+        description: |
+          Optional. Free-text drug description. Trimmed. NULL if not provided.
+
+      - name: image_url
+        description: |
+          Optional. URL to the drug product image. Trimmed. NULL if not provided.
+
+      - name: created_at
+        description: |
+          Optional. Record creation timestamp. Cast via TRY_CAST. NULL if unparseable.
+
+      - name: updated_at
+        description: |
+          Optional. Last update timestamp. Cast via TRY_CAST. NULL if unparseable.
+
+
+  # ──────────────────────────────────────────
+  # 3. STG_DRUG_ALTERNATIVES
+  # ──────────────────────────────────────────
+  - name: stg_drug_alternatives
+    description: |
+      Staging model for the drug alternatives mapping table.
+      Reads from the drug_alternatives seed and performs:
+        - Type casting of both ID columns to INTEGER via TRY_CAST
+        - Removal of rows where either ID is NULL
+        - Removal of self-references (drug_id = alternative_drug_id)
+        - Deduplication of identical pairs via SELECT DISTINCT
+
+      No ID is generated here — id is assigned in core_drug_alternatives.
+      No business logic — FK existence is validated in core_drug_alternatives
+      by joining against core_drugs.
+
+      Unchanged from previous schema version. drug_id and
+      alternative_drug_id are FK columns in the CSV, not the PK "id"
+      of the drugs table.
+
+      Feeds: core_drug_alternatives
+    columns:
+      - name: drug_id
+        description: |
+          Foreign key referencing drugs.id.
+          The primary drug for which alternatives are listed.
+          Cast as INTEGER. Rows where this is NULL are excluded.
+        tests:
+          - not_null
+
+      - name: alternative_drug_id
+        description: |
+          Foreign key referencing drugs.id.
+          The alternative drug. Cast as INTEGER.
+          Rows where this equals drug_id are excluded (no self-references).
+          Rows where this is NULL are excluded.
+        tests:
+          - not_null
+
+
+  # ──────────────────────────────────────────
+  # 4. STG_PHARMACY_INVENTORY
+  # ──────────────────────────────────────────
+  - name: stg_pharmacy_inventory
+    description: |
+      Staging model for pharmacy inventory data.
+      Replaces the old stg_drug_prices model.
+
+      Reads from the pharmacy_inventory seed (merged from all pharmacy
+      CSV uploads for the current pipeline run) and performs:
+        - Type casting for all columns
+        - Default values: price → 0.0, quantity → 0, minimum_stock → 0,
+          last_updated → CURRENT_TIMESTAMP
+        - Removal of rows with NULL pharmacy_id or NULL drug_id
+        - Deduplication per pharmacy/drug_id pair — keeping the record
+          with the most recent last_updated timestamp
+
+      NOTE (post-migration audit): pharmacies upload drug_id directly,
+      not a drug name. drug_id passes straight through this model and
+      is validated (not resolved) downstream in core_pharmacy_inventory.sql
+      via an INNER JOIN against core_drugs.id. Rows whose drug_id does not
+      exist in core_drugs are dropped there.
+
+      NOTE: The "available" boolean column from the old schema is gone.
+      Availability is derived downstream as: quantity > 0.
+
+      Feeds: core_pharmacy_inventory
+    columns:
+      - name: pharmacy_id
+        description: |
+          ID of the submitting pharmacy. Cast as INTEGER.
+          Rows where this is NULL are excluded entirely.
+        tests:
+          - not_null
+
+      - name: drug_id
+        description: |
+          Internal drug ID as provided directly by the pharmacy.
+          Cast as INTEGER. Rows where this is NULL are excluded.
+          Validated (existence-checked, not resolved) against core_drugs
+          in core_pharmacy_inventory.sql — unmatched IDs are dropped there.
+        tests:
+          - not_null
+
+      - name: price
+        description: |
+          Retail price of the drug at this pharmacy.
+          Cast via TRY_CAST to DOUBLE. Defaults to 0.0 if NULL or unparseable.
+        tests:
+          - not_null
+
+      - name: quantity
+        description: |
+          Current stock quantity. Cast via TRY_CAST to INTEGER.
+          Defaults to 0 if NULL or unparseable.
+          Drives the availability derivation: quantity > 0 = available.
+        tests:
+          - not_null
+
+      - name: minimum_stock
+        description: |
+          Minimum stock threshold. Cast via TRY_CAST to INTEGER.
+          Defaults to 0 if NULL or unparseable.
+        tests:
+          - not_null
+
+      - name: last_updated
+        description: |
+          Timestamp of the pharmacy's most recent stock update.
+          Cast via TRY_CAST to TIMESTAMP. Defaults to CURRENT_TIMESTAMP
+          if NULL or unparseable. Used as the deduplication ordering key.
+        tests:
+          - not_null
