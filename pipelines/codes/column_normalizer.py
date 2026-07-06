@@ -429,6 +429,10 @@ def normalize_pharmacy_csv(
     df = pd.read_csv(filepath)
     logger.info(f"📋 Loaded {len(df)} rows, {len(df.columns)} columns")
 
+    #step 0
+    df["last_updated"] = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(f"Step 0 ✅ | Inserted last_updated timestamp: {df['last_updated'].iloc[0]}")
+
     # Step 1
     df = clean_column_names(df)
 
