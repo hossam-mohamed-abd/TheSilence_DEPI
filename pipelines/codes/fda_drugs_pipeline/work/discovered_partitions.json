@@ -1,0 +1,218 @@
+{
+  "year": 2026,
+  "total_partitions_found": 34,
+  "all_partitions": [
+    {
+      "display_name": "2026 Q1 (part 1 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0001-of-0034.json.zip",
+      "size_mb": "219.40",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 2 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0002-of-0034.json.zip",
+      "size_mb": "196.13",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 3 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0003-of-0034.json.zip",
+      "size_mb": "218.58",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 4 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0004-of-0034.json.zip",
+      "size_mb": "216.67",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 5 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0005-of-0034.json.zip",
+      "size_mb": "163.20",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 6 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0006-of-0034.json.zip",
+      "size_mb": "214.14",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 7 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0007-of-0034.json.zip",
+      "size_mb": "104.79",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 8 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0008-of-0034.json.zip",
+      "size_mb": "137.28",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 9 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0009-of-0034.json.zip",
+      "size_mb": "86.56",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 10 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0010-of-0034.json.zip",
+      "size_mb": "91.93",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 11 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0011-of-0034.json.zip",
+      "size_mb": "73.60",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 12 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0012-of-0034.json.zip",
+      "size_mb": "12.17",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 13 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0013-of-0034.json.zip",
+      "size_mb": "26.65",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 14 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0014-of-0034.json.zip",
+      "size_mb": "189.45",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 15 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0015-of-0034.json.zip",
+      "size_mb": "144.49",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 16 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0016-of-0034.json.zip",
+      "size_mb": "7.39",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 17 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0017-of-0034.json.zip",
+      "size_mb": "7.16",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 18 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0018-of-0034.json.zip",
+      "size_mb": "32.10",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 19 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0019-of-0034.json.zip",
+      "size_mb": "178.48",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 20 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0020-of-0034.json.zip",
+      "size_mb": "204.16",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 21 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0021-of-0034.json.zip",
+      "size_mb": "202.05",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 22 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0022-of-0034.json.zip",
+      "size_mb": "32.98",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 23 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0023-of-0034.json.zip",
+      "size_mb": "5.93",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 24 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0024-of-0034.json.zip",
+      "size_mb": "5.78",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 25 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0025-of-0034.json.zip",
+      "size_mb": "6.93",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 26 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0026-of-0034.json.zip",
+      "size_mb": "10.22",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 27 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0027-of-0034.json.zip",
+      "size_mb": "24.78",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 28 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0028-of-0034.json.zip",
+      "size_mb": "23.71",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 29 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0029-of-0034.json.zip",
+      "size_mb": "29.26",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 30 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0030-of-0034.json.zip",
+      "size_mb": "138.32",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 31 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0031-of-0034.json.zip",
+      "size_mb": "197.56",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 32 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0032-of-0034.json.zip",
+      "size_mb": "210.42",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 33 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0033-of-0034.json.zip",
+      "size_mb": "186.09",
+      "records": 12000
+    },
+    {
+      "display_name": "2026 Q1 (part 34 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0034-of-0034.json.zip",
+      "size_mb": "15.94",
+      "records": 1221
+    }
+  ],
+  "sampled_partitions": [
+    {
+      "display_name": "2026 Q1 (part 7 of 34)",
+      "file": "https://download.open.fda.gov/drug/event/2026q1/drug-event-0007-of-0034.json.zip",
+      "size_mb": "104.79",
+      "records": 12000
+    }
+  ]
+}
