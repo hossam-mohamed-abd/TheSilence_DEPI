@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+coverage/
+!**/README.md
+.angular/
+.vercel/
+.next/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env/
+.env.*
+!.env.example
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Local IDE files
+.vscode/
+.idea/
+
+# Data extracts and local secrets
+*.sqlite
+*.db
+local_data/
+exports/
