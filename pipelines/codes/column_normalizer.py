@@ -1,64 +1,49 @@
 """
 column_normalizer.py
 --------------------
-Handles column name normalization for pharmacy-uploaded CSV files.
+Validates and prepares pharmacy-uploaded CSV files for seeding into DuckDB.
 
-Pipeline:
-    Step 1 → Lowercase & strip all column names
-    Step 2 → Exact match from mapping dictionary
-    Step 3 → Fuzzy match fallback (rapidfuzz)
-    Step 4 → Drop columns not in our schema
-    Step 5 → Flag any expected columns that are missing
+ARCHITECTURAL CHANGE (post-incident)
+─────────────────────────────────────────────────────────────
+Column name normalization (exact matching + fuzzy matching via rapidfuzz)
+has been REMOVED from this pipeline entirely.
+
+Reason: fuzzy matching caused a real production incident. A bare "id"
+column (the CSV's own row identity, deliberately not part of any target
+schema) scored a 90% fuzzy-match confidence against "drug_id" (and,
+depending on set() ordering, sometimes "pharmacy_id") purely because
+"id" is a substring of both. This silently renamed the column, created
+a DataFrame with two identically-labeled columns, and resulted in
+pharmacy_id values being silently overwritten by row-identity values
+with no error raised anywhere in the pipeline.
+
+The correct fix is architectural, not a smarter fuzzy-match threshold:
+schema correctness is now enforced upstream, before a file ever reaches
+Supabase Storage —
+    1. The frontend instructs pharmacies to upload files in a
+       predefined, fixed schema.
+    2. The backend validates the uploaded file's schema before
+       forwarding it to Supabase Storage.
+
+By the time a file reaches this pipeline, its column names are
+guaranteed correct by contract. This module's job has shrunk
+accordingly: read the CSV, stamp it with a processing timestamp,
+verify the contract was honored, and pass clean data downstream.
+It no longer guesses at intent — if the contract is violated, this
+module fails loudly rather than silently repairing or dropping data.
+
+Pipeline (current):
+    Step 1 → Insert last_updated processing timestamp
+    Step 2 → Drop any unexpected columns (contract violation — logged
+              as an error, not silently tolerated)
+    Step 3 → Verify all expected columns are present; hard-fail if not
 
 Dependencies:
-    pip install pandas rapidfuzz
-
-SCHEMA MIGRATION NOTES (new ERD)
-─────────────────────────────────────────────────────────────
-  - TABLE_SCHEMAS["drug_prices"] renamed → "pharmacy_inventory"
-      Removed:  available, name
-      Added:    quantity, minimum_stock
-
-  - TABLE_SCHEMAS["drugs"]
-      Renamed:  active_ingredient → active_substance
-      Added:    dosage_form, strength, manufacturer, image_url
-
-  - TABLE_SCHEMAS["drug_categories"]
-      Added:    description
-
-  - COLUMN_MAPPING
-      All "active_ingredient" target values renamed → "active_substance"
-      New sections added for: active_substance, dosage_form, strength,
-                              manufacturer, image_url, quantity, minimum_stock
-
-  NOTE — PK columns (id) are intentionally excluded from TABLE_SCHEMAS.
-  The normalizer is called on pharmacy-uploaded CSVs only.
-  Structured CSVs (drugs.csv, drug_categories.csv, drug_alternatives.csv)
-  are copied directly to seeds/ without normalization and must already
-  use the correct ERD column names.
-
-  NOTE — "available" entries in COLUMN_MAPPING are kept for backward
-  compatibility with old pharmacy CSVs. Since "available" is no longer
-  in the pharmacy_inventory schema, it is silently dropped at Step 4.
-
-  NOTE — pharmacy_inventory no longer includes "name". Per the ERD,
-  pharmacies upload drug_id directly (an internal ID they already know),
-  not a drug name. This removed the entire name → drug_id resolution
-  step that previously existed in core_pharmacy_inventory.sql, and also
-  removed the "auto-add unknown drug" branch from core_drugs.sql, since
-  there is no longer a name to auto-catalogue an unknown drug from.
-  Any inventory row with a drug_id not found in core_drugs is now
-  dropped (not auto-added) — this is an intentional decision, not an
-  oversight, confirmed as part of this migration.
-  ASSUMPTION (to be revisited): this assumes pharmacies — or whatever
-  system sits between them and our pipeline — resolve drug names to our
-  internal drug_id before the file reaches Supabase Storage. If that is
-  not actually true in production, this file and the core model both
-  need to be revisited.
+    pip install pandas
+    (rapidfuzz is no longer required by this module)
 """
 
 import pandas as pd
-from rapidfuzz import process
 import logging
 
 # ─────────────────────────────────────────────
@@ -73,32 +58,35 @@ logger = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
 # Schema Definitions
-# What columns each table expects (standard names)
+# What columns each table expects (standard, exact names).
+# These are now a CONTRACT enforced upstream by the frontend/backend,
+# not a target for fuzzy guessing. A file that doesn't match this
+# exactly indicates the contract was violated somewhere upstream.
 #
-# PK columns (id) are excluded by design — see module docstring.
+# PK columns (id) are intentionally excluded — see module docstring.
 # ─────────────────────────────────────────────
-TABLE_SCHEMAS = {
+NECESSARY_TABLE_SCHEMAS = {
     "drugs": [
         "name",
-        "active_substance",     # renamed from active_ingredient
+        "active_substance",
         "category_id",
-        "dosage_form",          # new
-        "strength",             # new
-        "manufacturer",         # new
+        "dosage_form",
+        "strength",
+        "manufacturer",
         "description",
-        "image_url",            # new
+        "image_url",
     ],
-    "pharmacy_inventory": [     # renamed from drug_prices
+    "pharmacy_inventory": [
         "pharmacy_id",
-        "drug_id",               # pharmacies upload internal drug_id directly (per ERD)
-        "quantity",              # new — replaces available; availability = quantity > 0
-        "minimum_stock",         # new
+        "drug_id",
+        "quantity",
+        "minimum_stock",
         "price",
         "last_updated",
     ],
     "drug_categories": [
         "name",
-        "description",          # new
+        "description",
     ],
     "drug_alternatives": [
         "drug_id",
@@ -108,278 +96,93 @@ TABLE_SCHEMAS = {
 
 
 # ─────────────────────────────────────────────
-# Column Mapping Dictionary
-# Maps all known variations → standard column name
-# Add new variations here as you discover them
+# STEP 1: Insert last_updated processing timestamp
 # ─────────────────────────────────────────────
-COLUMN_MAPPING = {
-
-    # ── Drug name variations ──
-    "drug_name":                "name",
-    "medical_name":             "name",
-    "medicine_name":            "name",
-    "medication_name":          "name",
-    "medication":               "name",
-    "drug":                     "name",
-    "trade_name":               "name",
-    "brand_name":               "name",
-    "product_name":             "name",
-    "item_name":                "name",
-
-    # ── Active substance variations ──
-    # (previously mapped to "active_ingredient" — renamed to "active_substance")
-    "active_substance":         "active_substance",
-    "active_ingredient":        "active_substance",
-    "ingredient":               "active_substance",
-    "generic_name":             "active_substance",
-    "compound":                 "active_substance",
-    "formula":                  "active_substance",
-    "chemical_name":            "active_substance",
-    "composition":              "active_substance",
-    "active_compound":          "active_substance",
-    "main_ingredient":          "active_substance",
-
-    # ── Dosage form variations ── (new)
-    "dosage_form":              "dosage_form",
-    "form":                     "dosage_form",
-    "drug_form":                "dosage_form",
-    "formulation":              "dosage_form",
-    "drug_formulation":         "dosage_form",
-    "pharmaceutical_form":      "dosage_form",
-
-    # ── Strength variations ── (new)
-    "strength":                 "strength",
-    "dosage":                   "strength",
-    "concentration":            "strength",
-    "potency":                  "strength",
-    "dose":                     "strength",
-    "drug_strength":            "strength",
-
-    # ── Manufacturer variations ── (new)
-    "manufacturer":             "manufacturer",
-    "made_by":                  "manufacturer",
-    "company":                  "manufacturer",
-    "pharma_company":           "manufacturer",
-    "produced_by":              "manufacturer",
-    "drug_manufacturer":        "manufacturer",
-    "producing_company":        "manufacturer",
-
-    # ── Image URL variations ── (new)
-    "image_url":                "image_url",
-    "image":                    "image_url",
-    "photo_url":                "image_url",
-    "picture_url":              "image_url",
-    "img_url":                  "image_url",
-    "drug_image":               "image_url",
-
-    # ── Category variations ──
-    "category_id":              "category_id",
-    "category":                 "category_id",
-    "drug_category":            "category_id",
-    "drug_type":                "category_id",
-    "type":                     "category_id",
-    "class":                    "category_id",
-    "drug_class":               "category_id",
-
-    # ── Description variations ──
-    "description":              "description",
-    "desc":                     "description",
-    "details":                  "description",
-    "drug_description":         "description",
-    "notes":                    "description",
-    "info":                     "description",
-
-    # ── Price variations ──
-    "price":                    "price",
-    "drug_price":               "price",
-    "cost":                     "price",
-    "amount":                   "price",
-    "unit_price":               "price",
-    "selling_price":            "price",
-    "retail_price":             "price",
-    "sale_price":               "price",
-
-    # ── Quantity variations ── (new — replaces available as the inventory signal)
-    "quantity":                 "quantity",
-    "qty":                      "quantity",
-    "stock":                    "quantity",
-    "stock_quantity":           "quantity",
-    "stock_level":              "quantity",
-    "current_stock":            "quantity",
-    "units_available":          "quantity",
-    "units_in_stock":           "quantity",
-    "in_hand":                  "quantity",
-    "on_hand":                  "quantity",
-
-    # ── Minimum stock variations ── (new)
-    "minimum_stock":            "minimum_stock",
-    "min_stock":                "minimum_stock",
-    "min_qty":                  "minimum_stock",
-    "min_quantity":             "minimum_stock",
-    "reorder_level":            "minimum_stock",
-    "reorder_point":            "minimum_stock",
-    "safety_stock":             "minimum_stock",
-    "minimum_quantity":         "minimum_stock",
-
-    # ── Availability variations ──
-    # NOTE: "available" is no longer a column in pharmacy_inventory.
-    # These mappings are kept for backward compatibility with old pharmacy CSVs.
-    # If a CSV contains any of these columns they will be mapped to "available"
-    # and then silently dropped at Step 4 (not in schema → not kept).
-    "available":                "available",
-    "is_available":             "available",
-    "availability":             "available",
-    "in_stock":                 "available",
-    "stock_status":             "available",
-    "status":                   "available",
-    "stocked":                  "available",
-
-    # ── Pharmacy ID variations ──
-    "pharmacy_id":              "pharmacy_id",
-    "pharmacy":                 "pharmacy_id",
-    "branch_id":                "pharmacy_id",
-    "store_id":                 "pharmacy_id",
-    "branch":                   "pharmacy_id",
-
-    # ── Drug ID variations ──
-    # Used as an FK reference in pharmacy_inventory CSVs.
-    # Not the same as the PK "id" column in the drugs table.
-    "drug_id":                  "drug_id",
-    "medicine_id":              "drug_id",
-    "medication_id":            "drug_id",
-    "item_id":                  "drug_id",
-    "product_id":               "drug_id",
-
-    # ── Timestamp variations ──
-    "last_updated":             "last_updated",
-    "updated_at":               "last_updated",
-    "last_update":              "last_updated",
-    "update_date":              "last_updated",
-    "modified_at":              "last_updated",
-    "date_modified":            "last_updated",
-    "timestamp":                "last_updated",
-}
-
-
-# ─────────────────────────────────────────────
-# STEP 1: Lowercase & strip column names
-# ─────────────────────────────────────────────
-def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
+def insert_last_updated(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Lowercase all column names and strip whitespace.
-    Also replaces spaces with underscores for consistency.
+    Stamps every row with the current processing time. Pharmacy CSVs
+    do not include this column — it is the pipeline's responsibility,
+    reflecting the moment this file was processed (not when the
+    pharmacy itself last updated their stock).
+
+    Whole-second precision is used deliberately (no microseconds).
+    Microsecond-precision timestamps have previously caused DuckDB's
+    CSV sniffer to fail entirely on otherwise well-formed files.
     """
-    df.columns = (
-        df.columns
-        .str.lower()
-        .str.strip()
-        .str.replace(" ", "_", regex=False)
-        .str.replace("-", "_", regex=False)
-    )
-    logger.info(f"Step 1 ✅ | Cleaned column names: {list(df.columns)}")
+    df["last_updated"] = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(f"Step 1 ✅ | Inserted last_updated timestamp: {df['last_updated'].iloc[0]}")
     return df
 
 
 # ─────────────────────────────────────────────
-# STEP 2: Exact match from mapping dictionary
-# ─────────────────────────────────────────────
-def exact_match(df: pd.DataFrame) -> tuple[pd.DataFrame, list]:
-    """
-    Renames columns using exact matches from COLUMN_MAPPING.
-    Returns the dataframe and a list of columns that had no exact match.
-    """
-    rename_map = {}
-    unmatched = []
-
-    for col in df.columns:
-        if col in COLUMN_MAPPING:
-            rename_map[col] = COLUMN_MAPPING[col]
-        else:
-            unmatched.append(col)
-
-    df = df.rename(columns=rename_map)
-
-    if rename_map:
-        logger.info(f"Step 2 ✅ | Exact matches found: {rename_map}")
-    if unmatched:
-        logger.warning(f"Step 2 ⚠️  | No exact match for columns: {unmatched}")
-
-    return df, unmatched
-
-
-# ─────────────────────────────────────────────
-# STEP 3: Fuzzy match fallback
-# ─────────────────────────────────────────────
-def fuzzy_match(
-    df: pd.DataFrame,
-    unmatched_cols: list,
-    threshold: int = 80
-) -> pd.DataFrame:
-    """
-    Tries to match unmatched columns to standard names using fuzzy matching.
-    Only renames if similarity score >= threshold (default 80%).
-    """
-    standard_names = list(set(COLUMN_MAPPING.values()))
-    rename_map = {}
-
-    for col in unmatched_cols:
-        result = process.extractOne(col, standard_names)
-
-        if result is None:
-            logger.warning(f"Step 3 ❌ | Could not fuzzy match: '{col}' — will be dropped")
-            continue
-
-        match, score, _ = result
-
-        if score >= threshold:
-            rename_map[col] = match
-            logger.info(f"Step 3 ✅ | Fuzzy matched: '{col}' → '{match}' (score: {score})")
-        else:
-            logger.warning(
-                f"Step 3 ❌ | Low confidence for '{col}' "
-                f"(best match: '{match}', score: {score}) — will be dropped"
-            )
-
-    df = df.rename(columns=rename_map)
-    return df
-
-
-# ─────────────────────────────────────────────
-# STEP 4: Drop columns not in schema
+# STEP 2: Drop unexpected columns
 # ─────────────────────────────────────────────
 def drop_extra_columns(df: pd.DataFrame, table_name: str) -> pd.DataFrame:
     """
     Keeps only the columns defined in the target table schema.
     Drops everything else.
+
+    Under the new upstream-validated contract, this should rarely find
+    anything to drop. If it does, that is a signal the frontend/backend
+    schema contract was violated somewhere — logged as an error, not
+    a routine cleanup step.
     """
-    expected_cols = TABLE_SCHEMAS.get(table_name)
+    expected_cols = NECESSARY_TABLE_SCHEMAS.get(table_name)
 
     if expected_cols is None:
         raise ValueError(
             f"Unknown table: '{table_name}'. "
-            f"Available tables: {list(TABLE_SCHEMAS.keys())}"
+            f"Available tables: {list(NECESSARY_TABLE_SCHEMAS.keys())}"
         )
 
     cols_to_keep = [col for col in expected_cols if col in df.columns]
     dropped = [col for col in df.columns if col not in expected_cols]
 
     if dropped:
-        logger.info(f"Step 4 🗑️  | Dropping extra columns: {dropped}")
+        logger.error(
+            f"Step 2 🚨 | Unexpected columns found and dropped: {dropped}. "
+            f"This indicates the upstream schema contract was violated — "
+            f"investigate the frontend/backend validation for this upload."
+        )
 
     df = df[cols_to_keep]
-    logger.info(f"Step 4 ✅ | Kept columns: {list(df.columns)}")
+
+    # Defensive check: if selection ever produces duplicate column
+    # labels, fail loudly rather than silently operating on ambiguous
+    # data. This is exactly the failure mode that caused the incident
+    # described in the module docstring.
+    duplicate_cols = df.columns[df.columns.duplicated()].tolist()
+    if duplicate_cols:
+        raise ValueError(
+            f"Step 2 🚨 FATAL | Duplicate column labels detected after "
+            f"filtering: {duplicate_cols}. Refusing to proceed — this "
+            f"would silently corrupt data. File: table '{table_name}'."
+        )
+
+    logger.info(f"Step 2 ✅ | Kept columns: {list(df.columns)}")
     return df
 
 
 # ─────────────────────────────────────────────
-# STEP 5: Flag missing expected columns
+# STEP 3: Verify expected columns are present (hard fail)
 # ─────────────────────────────────────────────
-def flag_missing_columns(df: pd.DataFrame, table_name: str) -> dict:
+def verify_schema(df: pd.DataFrame, table_name: str) -> dict:
     """
-    Checks which expected columns are missing from the final dataframe.
-    Returns a report dictionary.
+    Checks that all expected columns are present in the DataFrame.
+
+    Per the new contract, a missing column is NOT tolerated — it means
+    the upstream schema validation (frontend/backend) failed to catch
+    a malformed upload, or the contract itself has drifted out of sync
+    with this pipeline. Either way, this is a hard failure, not a
+    warning to route around silently.
+
+    Raises:
+        ValueError if any expected column is missing.
+
+    Returns:
+        report dict, for logging purposes, if validation passes.
     """
-    expected_cols = TABLE_SCHEMAS.get(table_name, [])
+    expected_cols = NECESSARY_TABLE_SCHEMAS.get(table_name, [])
     missing = [col for col in expected_cols if col not in df.columns]
     present = [col for col in expected_cols if col in df.columns]
 
@@ -387,16 +190,22 @@ def flag_missing_columns(df: pd.DataFrame, table_name: str) -> dict:
         "table":    table_name,
         "present":  present,
         "missing":  missing,
-        "status":   "OK" if not missing else "INCOMPLETE"
+        "status":   "OK" if not missing else "REJECTED",
     }
 
     if missing:
-        logger.warning(
-            f"Step 5 ⚠️  | Table '{table_name}' is missing expected columns: {missing}"
+        logger.error(
+            f"Step 3 🚨 FATAL | Table '{table_name}' is missing required "
+            f"columns: {missing}. Upstream schema contract was violated — "
+            f"this file must be rejected, not silently patched."
         )
-    else:
-        logger.info(f"Step 5 ✅ | All expected columns present for table '{table_name}'")
+        raise ValueError(
+            f"Schema contract violation for table '{table_name}': "
+            f"missing required columns {missing}. Expected exactly: "
+            f"{expected_cols}."
+        )
 
+    logger.info(f"Step 3 ✅ | All expected columns present for table '{table_name}'")
     return report
 
 
@@ -406,22 +215,27 @@ def flag_missing_columns(df: pd.DataFrame, table_name: str) -> dict:
 def normalize_pharmacy_csv(
     filepath: str,
     table_name: str,
-    fuzzy_threshold: int = 80
 ) -> tuple[pd.DataFrame, dict]:
     """
-    Full normalization pipeline for a pharmacy-uploaded CSV file.
+    Validates and prepares a pharmacy-uploaded CSV file for seeding.
 
     Args:
-        filepath        : Path to the uploaded CSV file
-        table_name      : Target table name (must be in TABLE_SCHEMAS)
-        fuzzy_threshold : Minimum fuzzy match score (0-100), default 80
+        filepath   : Path to the uploaded CSV file
+        table_name : Target table name (must be in NECESSARY_TABLE_SCHEMAS)
 
     Returns:
-        df      : Cleaned, normalized DataFrame ready for DuckDB
-        report  : Summary report of the normalization process
+        df      : Cleaned DataFrame ready for DuckDB, columns matching
+                  the target schema exactly.
+        report  : Summary report of the validation process.
+
+    Raises:
+        ValueError if the file violates the schema contract (missing
+        required columns, or a duplicate-column condition is detected).
+        Callers (e.g. the Airflow DAG) should treat this as a file to
+        reject/quarantine, not a row to patch around.
     """
     logger.info(f"{'─'*55}")
-    logger.info(f"🚀 Starting normalization for table: '{table_name}'")
+    logger.info(f"🚀 Starting validation for table: '{table_name}'")
     logger.info(f"📂 File: {filepath}")
     logger.info(f"{'─'*55}")
 
@@ -429,28 +243,17 @@ def normalize_pharmacy_csv(
     df = pd.read_csv(filepath)
     logger.info(f"📋 Loaded {len(df)} rows, {len(df.columns)} columns")
 
-    #step 0
-    df["last_updated"] = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Step 0 ✅ | Inserted last_updated timestamp: {df['last_updated'].iloc[0]}")
-
     # Step 1
-    df = clean_column_names(df)
+    df = insert_last_updated(df)
 
     # Step 2
-    df, unmatched = exact_match(df)
-
-    # Step 3
-    if unmatched:
-        df = fuzzy_match(df, unmatched, threshold=fuzzy_threshold)
-
-    # Step 4
     df = drop_extra_columns(df, table_name)
 
-    # Step 5
-    report = flag_missing_columns(df, table_name)
+    # Step 3 — raises on failure
+    report = verify_schema(df, table_name)
 
     logger.info(f"{'─'*55}")
-    logger.info(f"✅ Normalization complete | Status: {report['status']}")
+    logger.info(f"✅ Validation complete | Status: {report['status']}")
     logger.info(f"{'─'*55}\n")
 
     return df, report
@@ -463,20 +266,20 @@ if __name__ == "__main__":
 
     import os
 
-    # ── Example 1: drugs CSV with non-standard column names ────
+    # ── Example 1: drugs CSV, already schema-correct ────
     print("=" * 55)
-    print("Example 1 — drugs table")
+    print("Example 1 — drugs table (schema-correct upload)")
     print("=" * 55)
 
     drugs_sample = {
-        "drug_name":        ["Panadol", "Aspirin", "Amoxil"],
-        "generic_name":     ["Paracetamol", "Acetylsalicylic acid", "Amoxicillin"],
-        "drug_category":    [1, 2, 3],
-        "formulation":      ["Tablet", "Tablet", "Capsule"],     # → dosage_form
-        "concentration":    ["500mg", "100mg", "250mg"],         # → strength
-        "company":          ["GSK", "Bayer", "GSK"],             # → manufacturer
-        "drug_description": ["Pain reliever", "Blood thinner", "Antibiotic"],
-        "extra_col":        ["x", "y", "z"],                     # → dropped
+        "name":             ["Panadol", "Aspirin", "Amoxil"],
+        "active_substance": ["Paracetamol", "Acetylsalicylic acid", "Amoxicillin"],
+        "category_id":      [1, 2, 3],
+        "dosage_form":      ["Tablet", "Tablet", "Capsule"],
+        "strength":         ["500mg", "100mg", "250mg"],
+        "manufacturer":     ["GSK", "Bayer", "GSK"],
+        "description":      ["Pain reliever", "Blood thinner", "Antibiotic"],
+        "image_url":        ["", "", ""],
     }
 
     drugs_df = pd.DataFrame(drugs_sample)
@@ -487,25 +290,22 @@ if __name__ == "__main__":
         table_name="drugs"
     )
 
-    print("\n── Normalized DataFrame ──")
+    print("\n── Validated DataFrame ──")
     print(clean_df)
     print("\n── Report ──")
     print(report)
 
-    # ── Example 2: pharmacy inventory CSV ──────────────────────
+    # ── Example 2: pharmacy inventory CSV, already schema-correct ──
     print("\n" + "=" * 55)
-    print("Example 2 — pharmacy_inventory table")
+    print("Example 2 — pharmacy_inventory table (schema-correct upload)")
     print("=" * 55)
 
     inventory_sample = {
         "pharmacy_id":  [10, 10, 10],
-        "drug_id":      [1, 2, 3],                            # pharmacies upload internal drug_id directly
-        "cost":         [25.50, 15.00, 45.00],                # → price
-        "stock":        [100, 50, 0],                         # → quantity
-        "safety_stock": [20, 10, 5],                          # → minimum_stock
-        "timestamp":    ["2026-06-01", "2026-06-01", "2026-06-01"],  # → last_updated
-        "is_available": [True, True, False],                  # → available (dropped, no longer in schema)
-        "extra_col":    ["x", "y", "z"],                      # → dropped
+        "drug_id":      [1, 2, 3],
+        "price":        [25.50, 15.00, 45.00],
+        "quantity":     [100, 50, 0],
+        "minimum_stock":[20, 10, 5],
     }
 
     inventory_df = pd.DataFrame(inventory_sample)
@@ -516,11 +316,36 @@ if __name__ == "__main__":
         table_name="pharmacy_inventory"
     )
 
-    print("\n── Normalized DataFrame ──")
+    print("\n── Validated DataFrame ──")
     print(clean_df2)
     print("\n── Report ──")
     print(report2)
 
+    # ── Example 3: a file that VIOLATES the contract (extra + missing) ──
+    print("\n" + "=" * 55)
+    print("Example 3 — pharmacy_inventory table (contract VIOLATION)")
+    print("=" * 55)
+
+    bad_sample = {
+        "id":           [1, 2, 3],   # ← unexpected column (the exact incident)
+        "pharmacy_id":  [10, 10, 10],
+        "drug_id":      [1, 2, 3],
+        "price":        [25.50, 15.00, 45.00],
+        # quantity and minimum_stock are MISSING entirely
+    }
+
+    bad_df = pd.DataFrame(bad_sample)
+    bad_df.to_csv("/tmp/sample_bad.csv", index=False)
+
+    try:
+        normalize_pharmacy_csv(
+            filepath="/tmp/sample_bad.csv",
+            table_name="pharmacy_inventory"
+        )
+    except ValueError as e:
+        print(f"\n✅ Correctly rejected malformed file:\n{e}")
+
     # Cleanup
     os.remove("/tmp/sample_drugs.csv")
     os.remove("/tmp/sample_inventory.csv")
+    os.remove("/tmp/sample_bad.csv")
