@@ -29,8 +29,8 @@ medisearch-data-lake/
 ## Environment Variables
 
 ```env
-SUPABASE_URL=https://qthxwtthzikwmmcnlxip.supabase.co
-SUPABASE_KEY=sb_secret_GFuU_tmElpo_-yYJRgtyCQ_euYeapkL
+SUPABASE_URL=
+SUPABASE_KEY=
 ```
 
 ---
