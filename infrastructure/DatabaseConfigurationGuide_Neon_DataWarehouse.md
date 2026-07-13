@@ -92,7 +92,7 @@ postgresql://neondb_owner:npg_i0N2XhQuEUYL@ep-wandering-hill-at0u1gzo-pooler.c-9
 # Environment Variables
 
 ```env
-WAREHOUSE_DB_HOST=ep-wandering-hill-at0u1gzo-pooler.c-9.us-east-1.aws.neon.tech
+WAREHOUSE_DB_HOST=
 
 WAREHOUSE_DB_PORT=5432
 
@@ -100,13 +100,13 @@ WAREHOUSE_DB_NAME=neondb
 
 WAREHOUSE_DB_USER=neondb_owner
 
-WAREHOUSE_DB_PASSWORD=npg_i0N2XhQuEUYL
+WAREHOUSE_DB_PASSWORD=
 
 WAREHOUSE_DB_SSLMODE=require
 
 WAREHOUSE_DB_CHANNEL_BINDING=require
 
-WAREHOUSE_DATABASE_URL=postgresql://neondb_owner:npg_i0N2XhQuEUYL@ep-wandering-hill-at0u1gzo-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+WAREHOUSE_DATABASE_URL=postgresql:
 ```
 
 It is recommended to use environment variables instead of hardcoding credentials.
