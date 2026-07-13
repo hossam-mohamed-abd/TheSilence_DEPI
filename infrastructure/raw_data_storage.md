@@ -92,9 +92,9 @@ metadata.json
 # Environment Variables
 
 ```env
-B2_ENDPOINT="https://s3.us-east-005.backblazeb2.com"
-B2_KEY_ID="0057034b0b8248e0000000001"
-B2_APPLICATION_KEY="K005DnwCqFlnsv41kJIREOHF4MsEiE8"
+B2_ENDPOINT="
+B2_KEY_ID=""
+B2_APPLICATION_KEY=""
 B2_BUCKET_NAME=DEPI-data-lake
 
 ```
