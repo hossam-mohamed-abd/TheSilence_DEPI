@@ -20,7 +20,7 @@ This document explains how to connect to the project's PostgreSQL database hoste
 ## Host
 
 ```env
-DB_HOST=ep-spring-sound-atfc1f55-pooler.c-9.us-east-1.aws.neon.tech
+DB_HOST=
 ```
 
 ## Database
@@ -44,7 +44,7 @@ DB_PORT=5432
 ## Endpoint ID
 
 ```env
-DB_ENDPOINT=ep-spring-sound-atfc1f55
+DB_ENDPOINT=
 ```
 
 ---
@@ -83,12 +83,12 @@ echo "Connected Successfully";
 
 ```env
 DB_CONNECTION=pgsql
-DB_HOST=ep-spring-sound-atfc1f55-pooler.c-9.us-east-1.aws.neon.tech
+DB_HOST=
 DB_PORT=5432
 DB_DATABASE=neondb
 DB_USERNAME=neondb_owner
 DB_PASSWORD=YOUR_DATABASE_PASSWORD
-DB_ENDPOINT=ep-spring-sound-atfc1f55
+DB_ENDPOINT=
 DB_SSLMODE=require
 ```
 
