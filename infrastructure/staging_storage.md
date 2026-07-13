@@ -135,9 +135,9 @@ pip install boto3 pandas pyarrow
 # Environment Variables
 
 ```env
-B2_ENDPOINT=https://s3.us-east-005.backblazeb2.com
-B2_KEY_ID=005bba81d4d65f90000000001
-B2_APPLICATION_KEY=K005UppmkxkYcgqaGDNxszdlDZi3mO4
+B2_ENDPOINT=
+B2_KEY_ID=
+B2_APPLICATION_KEY=
 B2_STAGING_BUCKET=DEPI-Staging-CleanData
 ```
 
